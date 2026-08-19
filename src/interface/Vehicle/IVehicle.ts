@@ -17,7 +17,7 @@ export interface IVehicle{
     year:number;
     odometer:number;
     lastNotedKms:number;
-    insuranceExpireDate:Date;
+    insuranceExpiryDate:Date;
     documents:IVehicleDocuments;
     createdAt?:Date;
     updatedAt?:Date;

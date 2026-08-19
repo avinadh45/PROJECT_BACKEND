@@ -28,12 +28,12 @@ export const registerSchema = z
         "Password must contain uppercase, lowercase and number"
       ),
 
-    confirmPassword: z
-      .string()
-      .min(1, "Confirm password is required"),
-  })
+  //   confirmPassword: z
+  //     .string()
+  //     .min(1, "Confirm password is required"),
+  // })
 
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords do not match",
-    path: ["confirmPassword"],
+  // .refine((data) => data.password === data.confirmPassword, {
+  //   message: "Passwords do not match",
+  //   path: ["confirmPassword"],
   });

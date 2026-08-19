@@ -21,7 +21,7 @@ export class BaseRepository<T> implements IBaseRepository<T> {
     }
 
     async updateById(id: string, updateData: Partial<T>): Promise<T | null> {
-        return await this.model.findByIdAndUpdate(id, updateData, { returnDocument: "after" });
+        return await this.model.findByIdAndUpdate(id, updateData, { returnDocument: "after"  });
     }
     async paination(filter:Record<string,any>,page:number = 1 , limit:number = 5){
         const skip = (page - 1) * limit ;

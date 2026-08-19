@@ -8,6 +8,7 @@ import {
   ICategoryReadRepository,
   ICatergoryCreateRepository,
 } from "../../interface/category/ICategoryRepository";
+import { Category } from "../../model/categoryModel";
 
 export class CategoryRepository
   implements ICatergoryCreateRepository, ICategoryReadRepository
@@ -55,5 +56,8 @@ export class CategoryRepository
   }
   async findByName(name: string): Promise<ICategory | null> {
     return await this.Model.findOne({name:{$regex:new RegExp(`^${name}$`,"i")}})
+  }
+  async findAllCategories(): Promise<ICategory[]> {
+    return await Category.find({status:"active"}).lean()
   }
 }

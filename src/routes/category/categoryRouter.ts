@@ -17,5 +17,6 @@ router.get("/",controller.getCategory.bind(controller))
 router.delete("/:id",controller.deleteCategory.bind(controller))
 router.put("/:id",upload.single("icon"),controller.updateCategory.bind(controller))
 router.patch("/:id/status",controller.block.bind(controller))
-router.get("/alreadyExist",controller.alreadyExist.bind(controller))
+router.get("/check-name",controller.checkNameExist)
+
 export default router

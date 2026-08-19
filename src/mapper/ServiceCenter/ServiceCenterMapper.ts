@@ -6,6 +6,12 @@ import { serviceCenterDetailsDTO } from "../../dto/admin/serviceCenterDetails";
 import { VerificationDetailsDTO } from "../../dto/admin/verificationDTO";
 import { VerificationStatusDTO } from "../../dto/serviceCenter/verifistatus";
 import { ServiceCenterEditDTO } from "../../dto/serviceCenter/serviceCenterEditDTO";
+import { AddServiceDTO } from "../../dto/serviceCenter/addServiceDTO";
+import { ServiceOfferedInput } from "../../interface/ServiceCenter/IServiceCenter";
+import { ServiceCenterSubscriptionStatusDTO } from "../../interface/subscription/IServiceCenterSubscriptionStatus";
+import { ISubscriptionReadRepos } from "../../interface/subscription/ISubscriptionReadRepository";
+import { AvailabilityResponseDTO } from "../../dto/serviceCenter/AvailabilityResponseDTO";
+import { Types } from "mongoose";
 export class ServiceCenterMapper {
   static toEntity(dto: ServiceCenterRegisterDTO): Partial<IServiceCenter> {
     return {
@@ -39,7 +45,7 @@ export class ServiceCenterMapper {
         },
       },
       servicesOffered: dto.servicesOffered.map((service) => ({
-        serviceId: service.serviceId,
+        serviceId: new Types.ObjectId(service.serviceId),
 
         advanceFee: 0,
 
@@ -187,9 +193,9 @@ export class ServiceCenterMapper {
     servicesOffered:
       entity.servicesOffered?.map((service) => ({
         serviceId:
-  typeof service.serviceId === "object"
+  typeof service.serviceId === "object" &&  "_id" in service.serviceId
     ? (service.serviceId as any)._id.toString()
-    : service.serviceId.toString(),
+    :  String(service.serviceId),
         advanceFee: service.advanceFee, 
         status: service.status,
         vehicleTypes:
@@ -222,5 +228,53 @@ export class ServiceCenterMapper {
     },
   };
 }
+static toServiceOffered(dto: AddServiceDTO): ServiceOfferedInput {
+  return {
+    serviceId: dto.serviceId,
+    advanceFee: dto.advanceFee ?? null,
+    status: "active",
+    vehicleType: dto.vehicleTypes,
+    serviceModes: dto.serviceModes
+  };
 }
+ static async toStatusDTO(
+    serviceCenter: IServiceCenter,
+    subscriptionReadRepo: ISubscriptionReadRepos
+  ): Promise<ServiceCenterSubscriptionStatusDTO> {
+    if (!serviceCenter.subscription?.planId) {
+      return { hasActiveSubscription: false, subscription: null };
+    }
 
+    const { planId, startDate, endDate, status } = serviceCenter.subscription;
+    const isExpired = new Date() > new Date(endDate);
+    const effectiveStatus: "active" | "expired" = isExpired ? "expired" : status;
+
+    const plan = await subscriptionReadRepo.findById(planId.toString());
+    const durationMonths = Math.round(
+      (new Date(endDate).getTime() - new Date(startDate).getTime()) / (1000 * 60 * 60 * 24 * 30)
+    );
+    const tier = plan?.pricing.find((t) => t.durationMonths === durationMonths);
+
+    return {
+      hasActiveSubscription: effectiveStatus === "active",
+      subscription: {
+        planId: planId.toString(),
+        planName: plan?.name ?? "Unknown Plan",
+        tier: tier ?? { durationMonths, price: 0 },
+        startDate,
+        expiryDate: endDate,
+        status: effectiveStatus,
+      },
+    };
+  }
+  static toResponseDTO(serviceCenter: IServiceCenter): AvailabilityResponseDTO {
+    const availability = serviceCenter.availability;
+
+    return {
+      workingDays: availability?.workingDays ?? [],
+      workingHours: availability?.workingHours ?? { start: "", end: "" },
+      slotDuration: availability?.slotDuration ?? 0,
+      maxBookingsPerSlot: availability?.maxBookingsPerSlot ?? 0,
+    };
+  }
+}

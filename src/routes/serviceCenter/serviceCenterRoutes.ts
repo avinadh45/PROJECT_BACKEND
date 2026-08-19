@@ -6,17 +6,22 @@ import { MechanicReadRepository } from "../../repository/mechanic/mechanicReadRe
 import { MechanicWriteRepository } from "../../repository/mechanic/mechanicWriteRepository";
 import { NodeMailerService } from "../../service/mail/NodeMailerService";
 import { MechanicService } from "../../service/mechanic/mechanicService";
- import { verifyServiceCenter } from "../../middleware/verifyserviceCenter";
-
+import { verifyServiceCenter } from "../../middleware/verifyserviceCenter";
+import { CategoryRepository } from "../../repository/category/CategoryRepository";
+import { Category } from "../../model/categoryModel";
 import { upload } from "../../middleware/upload";
+import { validate } from "../../middleware/userValidation";
+import { updateAvailabilitySchema } from "../../validation/updateAvilability";
+import { SlotRepository } from "../../repository/slot/slotRepository";
 const router = express.Router()
 
 const mailService = new NodeMailerService();
 const repository = new ServiceCenterRepository()
-
+const categoryRepo =  new CategoryRepository(Category)
 const readRepository = new MechanicReadRepository();
 const writeRepository = new MechanicWriteRepository();
-const service = new ServiceCenterService(repository,mailService)
+const slotRepository = new SlotRepository()
+const service = new ServiceCenterService(repository,mailService,categoryRepo,slotRepository)
 const mechanicService = new MechanicService(readRepository,writeRepository)
 const controller = new ServiceCenterController(service,mechanicService)
 
@@ -31,5 +36,13 @@ router.use(verifyServiceCenter)
 router.post("/logout",controller.logout)
 router.get("/application",controller.editVerification)
 router.patch("/application",upload.fields([{name:"garageLicense",maxCount:1},{name:"ownerIdProof",maxCount:1}]),controller.updateVerification)
+router.get("/services",controller.getServiceCenterWithService)
+router.patch("/fee",controller.updateServiceFee)
+router.post("/add-service",controller.addService)
+router.get("/categories",controller.getCategories)
+router.patch("/status/:serviceId",controller.toggleServiceStatus)
+router.get("/profile",controller.getProfile)
+router.patch("/availability",validate(updateAvailabilitySchema),controller.updateAvailability)
+
 
 export default router

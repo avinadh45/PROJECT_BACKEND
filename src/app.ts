@@ -7,6 +7,9 @@ import serviceCenterRouter from "./routes/serviceCenter/serviceCenterRoutes"
 import mechanicRouter from "./routes/mechanic/mechanicRoutes"
 import adminRouter from "./routes/admin/adminRoute"
 import categoryRouter from "./routes/category/categoryRouter"
+import vehicleRouter from "./routes/vehicle/vehicleRoute"
+import subscriptionRouter from "./routes/subscription/subscriptionRoute"
+import slotRoutes from "./routes/slot/slotRoute"
 import { errorMiddleware } from "./middleware/errorMiddleware";
 
 dotenv.config(); 
@@ -22,6 +25,9 @@ app.use("/service-center",serviceCenterRouter)
 app.use("/mechanic", mechanicRouter)
 app.use("/admin/categorys", categoryRouter) 
 app.use("/admin",adminRouter)
+app.use("/vehicle",vehicleRouter)
+app.use("/subscription",subscriptionRouter)
+app.use('/slot',slotRoutes)
 app.use(errorMiddleware)
 
-export default app
+export default app  

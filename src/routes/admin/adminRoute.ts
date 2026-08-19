@@ -10,6 +10,9 @@ import { RedisOtpRepository } from "../../repository/otp/RedisOtpRepository";
 import { NodeMailerService } from "../../service/mail/NodeMailerService";
 import { ServiceCenterService } from "../../service/serviceCenter/serviceCenterService";
 import { ServiceCenterRepository } from "../../repository/ServiceCenter/serviceCenterRepository";
+import { CategoryRepository } from "../../repository/category/CategoryRepository";
+import { SlotRepository } from "../../repository/slot/slotRepository";
+import { Category } from "../../model/categoryModel";
 
 const router = Router();
 
@@ -17,12 +20,13 @@ const userRepo = new UserRepository(User);
 const otpRepository = new RedisOtpRepository();
 const mailService = new NodeMailerService();
 const serviceCenterRepo = new ServiceCenterRepository()
+const categoryRepo = new CategoryRepository(Category)
 const userService =  new UserService( userRepo, 
     otpRepository,
     mailService)
-
+const slotRepository = new SlotRepository()
 const adminService = new Adminservice(userRepo);
-const serviceCenterService = new ServiceCenterService( serviceCenterRepo,mailService)
+const serviceCenterService = new ServiceCenterService( serviceCenterRepo,mailService,categoryRepo,slotRepository)
 const adminController = new AdminController(adminService,userService,serviceCenterService);
 
 router.post("/login", adminController.Login);

@@ -6,6 +6,7 @@ import { IServiceCenterService } from "../../interface/ServiceCenter/IServiceCen
 import { IUserService } from "../../interface/User/IUserService";
 import { asyncHandler } from "../../utils/asyncHandler";
 import { AppError } from "../../utils/AppError";
+import { sendSuccess } from "../../utils/apiResponse";
 
 export class AdminController {
   constructor(
@@ -30,13 +31,7 @@ export class AdminController {
       sameSite: "lax",
       maxAge:Number(process.env.REFRESH_TOKEN_MAX_AGE)
     });
-    return res.status(HttpStatus.OK).json({
-      success: true,
-      message: MESSAGES.ADMIN.LOGIN_SUCCESS,
-      data:{
-        admin:admin.admin
-      }
-    });
+    return sendSuccess(res,{admin:admin.admin},MESSAGES.ADMIN.LOGIN_SUCCESS,HttpStatus.OK)
   });
 
   refreshToken = asyncHandler(async(req:Request,res:Response)=>{
@@ -52,15 +47,15 @@ export class AdminController {
       sameSite: "lax",
       maxAge: Number(process.env.ACCESS_TOKEN_MAX_AGE)
     })
-    res.json({success:true})
+   return sendSuccess(res,null,MESSAGES.ADMIN.TOKEN_REFRESHED,HttpStatus.OK  )
   })
 
   userList = asyncHandler(async (req: Request, res: Response) => {
     const page = Number(req.query.page) || 1;
     const limit = Number(req.query.limit) || 5;
     const search = (req.query.search as string) || ""
-    let user = await this._userService.userList(page, limit,search);
-    return res.status(HttpStatus.OK).json({ success: true, ...user });
+    let result = await this._userService.userList(page, limit,search);
+    return sendSuccess(res,result,MESSAGES.USER.FETCH_SUCCESS,HttpStatus.OK)
   });
 
   serviceCenterList = asyncHandler(async (req: Request, res: Response) => {
@@ -68,32 +63,21 @@ export class AdminController {
     const limit = Number(req.query.limit) || 5;
     const search  = (req.query.search as string) || ""
     const serviceCenter = await this._serviceCenter.serviceCenterList(page,limit,search);
-    return res.status(HttpStatus.OK).json({ success: true, ...serviceCenter });
+    return sendSuccess(res,serviceCenter,MESSAGES.SERVICE_CENTER.FETCH_SUCCESS,HttpStatus.OK)
   });
 
   userDetails = asyncHandler(
     async (req: Request<{ id: string }>, res: Response) => {
       const { id } = req.params;
       const user = await this._userService.getUser(id);
-      return res
-        .status(HttpStatus.OK)
-        .json({
-          success: true,
-          message: MESSAGES.USER.FETCH_SUCCESS,
-          data: user,
-        });
-    },
-  );
+      return sendSuccess(res,user,MESSAGES.USER.FETCH_SUCCESS,HttpStatus.OK)     
+});
 
   blockUser = asyncHandler(
     async (req: Request<{ id: string }>, res: Response) => {
       const { id } = req.params;
       const user = await this._userService.block(id);
-      return res.status(HttpStatus.OK).json({
-        success: true,
-        message: MESSAGES.USER.BLOCK,
-        data: user,
-      });
+      return sendSuccess(res,user,MESSAGES.USER.BLOCK,HttpStatus.OK)
     },
   );
 
@@ -101,43 +85,32 @@ export class AdminController {
     async (req: Request<{ id: string }>, res: Response) => {
       const { id } = req.params;
       const serviceCenter = await this._serviceCenter.getServiceCenter(id);
-      return res
-        .status(HttpStatus.OK)
-        .json({
-          success: true,
-          message: MESSAGES.SERVICE_CENTER.FETCH_SUCCESS,
-          data: serviceCenter,
-        });
+      return sendSuccess(res,serviceCenter,MESSAGES.SERVICE_CENTER.FETCH_SUCCESS,HttpStatus.OK)
     },
-  );
+  ); 
 
   blockServiceCenter = asyncHandler(
     async (req: Request<{ id: string }>, res: Response) => {
       const { id } = req.params;
       const serviceCenter = await this._serviceCenter.block(id);
-      return res.status(HttpStatus.OK).json({
-        success: true,
-        message: MESSAGES.SERVICE_CENTER.BLOCK,
-        data: serviceCenter,
-      });
+      return sendSuccess(res,serviceCenter,MESSAGES.SERVICE_CENTER.BLOCK,HttpStatus.OK)
     },
   );
 
-  getPendingServiceCenter = asyncHandler(
-    async (req: Request, res: Response) => {
+  getPendingServiceCenter = asyncHandler(async (req: Request, res: Response) => {
       const serviceCenter = await this._serviceCenter.getPendingServiceCenter();
-      res.status(HttpStatus.ACCEPTED).json({ success: true, serviceCenter });
+     return sendSuccess(res,serviceCenter,MESSAGES.SERVICE_CENTER.FETCH_SUCCESS,HttpStatus.OK)
     },
   );
 
   getDashboard = asyncHandler(async(req:Request,res:Response)=>{
-    return res.status(HttpStatus.OK).json({success:true})
+    return sendSuccess(res, null, "Dashboard loaded", HttpStatus.OK);
   })
   verifiServiceCenterDetails = asyncHandler(
     async (req: Request<{ id: string }>, res: Response) => {
       const { id } = req.params;
       const data = await this._serviceCenter.getVerification(id);
-      return res.status(HttpStatus.OK).json({ success: true, data });
+      return sendSuccess(res,data,MESSAGES.SERVICE_CENTER.FETCH_SUCCESS,HttpStatus.OK)
     },
   );
 
@@ -145,9 +118,7 @@ export class AdminController {
     async (req: Request<{ id: string }>, res: Response) => {
       const { id } = req.params;
       await this._serviceCenter.acceptVerification(id);
-      return res
-        .status(HttpStatus.OK)
-        .json({ success: true, message: MESSAGES.SERVICE_CENTER.APPROVED });
+      return sendSuccess(res,null,MESSAGES.SERVICE_CENTER.APPROVED,HttpStatus.OK)
     },
   );
 
@@ -156,17 +127,12 @@ export class AdminController {
       const { id } = req.params;
       const { rejectionReason } = req.body;
       await this._serviceCenter.rejectVerification(id, rejectionReason);
-      return res
-        .status(HttpStatus.OK)
-        .json({ success: true, message: MESSAGES.SERVICE_CENTER.REJECT });
-    },
-  );
+      return sendSuccess(res, null, MESSAGES.SERVICE_CENTER.REJECT, HttpStatus.OK);
+});
   logout = asyncHandler(async (req: Request, res: Response) => {
    res.clearCookie("adminAccessToken", { sameSite: "lax", secure: process.env.NODE_ENV === "production" });
   res.clearCookie("adminRefreshToken", { sameSite: "lax", secure: process.env.NODE_ENV === "production" });
   
-    res.status(HttpStatus.OK).json({
-      success: true,
-    });
+     return sendSuccess(res, null, MESSAGES.ADMIN.LOGOUT_SUCCESS, HttpStatus.OK);;
   });
 }

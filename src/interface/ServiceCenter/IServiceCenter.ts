@@ -51,8 +51,8 @@ export interface IServiceCenter {
   };
 
   servicesOffered?: {
-    serviceId: string;
-    advanceFee: number;
+    serviceId: Types.ObjectId;
+    advanceFee: number | null;
     status?: string;
     vehicleTypes: string[];
     serviceModes: string[];
@@ -73,4 +73,13 @@ rejectedAt?: Date;
     endDate: Date;
     status: "active" | "expired";
   };
+}
+
+export type ServiceOfferedInput = { 
+
+  serviceId: Types.ObjectId | string , 
+  advanceFee: number | null , 
+  status:string, 
+  vehicleType:string[], 
+  serviceModes:string[]
 }

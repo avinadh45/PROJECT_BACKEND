@@ -10,4 +10,5 @@ export interface ICategoryReadRepository{
      getAll(query:CategoryQueryDTO):Promise<PaginatedResponse<ICategory>>
      findbyId(id:string):Promise<ICategory | null>
      findByName(name:string):Promise<ICategory | null>
+     findAllCategories():Promise<ICategory[]>
 }

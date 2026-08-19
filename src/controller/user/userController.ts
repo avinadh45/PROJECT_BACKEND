@@ -11,6 +11,7 @@ import { asyncHandler } from "../../utils/asyncHandler";
 import { MESSAGES } from "../../constants/message";
 import { AppError } from "../../utils/AppError";
 import { logger } from "../../config/logger";
+import { sendSuccess } from "../../utils/apiResponse";
 
 export class UserController {
   constructor(private _userService: IUserService) {}
@@ -22,25 +23,16 @@ export class UserController {
 
     const register = await this._userService.registerUser(dto);
 
-    return res.status(HttpStatus.OK).json({
-      success: true,
-      message: "success",
-      data: register,
-    });
+    return sendSuccess(res,register,MESSAGES.USER.REGITER,HttpStatus.OK)
   });
 
   Verifyotp = asyncHandler(
-    async (req: Request, res: Response): Promise<void> => {
+    async (req: Request, res: Response)=> {
       const dto: VerifyOtpDTO = req.body;
       logger.info("OTP verification requested", {email: dto.email,});
       const user = await this._userService.verifyOtp(dto);
-      res.status(HttpStatus.OK).json({
-        success: true,
-        message: "otp verified successfully",
-        data: user,
-      });
-    },
-  );
+      return sendSuccess(res,user,MESSAGES.USER.OTP_VERIFIED,HttpStatus.OK) 
+});
 
   LoginUser = asyncHandler(async (req: Request, res: Response) => {
     const dto: LoginDTO = req.body;
@@ -59,67 +51,45 @@ export class UserController {
       sameSite:"strict",
       maxAge: Number(process.env.REFRESH_TOKEN_MAX_AGE)
     })
-    return res.status(HttpStatus.OK).json({
-      success: true,
-      message: MESSAGES.USER.LOGIN_SUCCESS,
-      data:{
-        user:user.user
-      }
-    });
+     return sendSuccess(res, { user: user.user }, MESSAGES.USER.LOGIN_SUCCESS, HttpStatus.OK);
   });
 
   refresnToken = asyncHandler(async (req: Request, res: Response) => {
-
-
     const refreshToken = req.cookies.refreshToken
     if (!refreshToken) {
       throw new AppError("Refresh token required", HttpStatus.UNAUTHORIZED);
     }
     const result = await this._userService.refreshToken(refreshToken);
-    
     res.cookie("accessToken",result.accessToken,{
       httpOnly:true,
       secure : process.env.NODE_ENV === "production",
       sameSite: "strict",
       maxAge: Number(process.env.ACCESS_TOKEN_MAX_AGE)
     })
-
-    res.json({success:true});
+  return sendSuccess(res,null,MESSAGES.USER.REFRESH_TOKEN,HttpStatus.OK)
   });
 
 
 resendOtp = asyncHandler(async (req: Request,res: Response) => {
-
    const { email } = req.body;
-
    await this._userService.resendOtp(email);
-
-   return res.status(HttpStatus.OK).json({
-      success: true,
-      message: "OTP resent successfully"
-   });
+   return sendSuccess(res,null,MESSAGES.USER.OTP,HttpStatus.OK)
 
 });
 
  forgetPassword = asyncHandler(async(req: Request, res: Response)=> {
       const dto: ForgotPasswordDTO = req.body;
       await this._userService.forgotPassword(dto);
-      res
-        .status(HttpStatus.OK)
-        .json({ success: true, message: "Rest link sent to email" });
+      return sendSuccess(res,null,MESSAGES.USER.RESET_LINK,HttpStatus.OK)
   })
 
   getdashboard = asyncHandler(async(req:Request,res:Response)=>{
-    return res.status(HttpStatus.OK).json({success:true})
+    return sendSuccess(res,null,MESSAGES.USER.DASHBOARD,HttpStatus.OK)
   })
 resetPassword = asyncHandler(async(req: Request, res: Response)=> {
-    
       const dto: ResetPasswordDTO = req.body;
       await this._userService.resetPassword(dto);
-      res.status(HttpStatus.OK).json({
-        success: true,
-        message: "Password reset successfully",
-      });
+      return sendSuccess(res,null,MESSAGES.USER.PASSWORD_REST,HttpStatus.OK)
   })
   googleLogin = asyncHandler(async (req: Request, res: Response) => {
 
@@ -155,16 +125,12 @@ resetPassword = asyncHandler(async(req: Request, res: Response)=> {
         sameSite: "strict",
         maxAge:  Number(process.env.REFRESH_TOKEN_MAX_AGE)
       })
-   res.status(HttpStatus.OK).json({
-      success: true,
-      message: "Google login success",
-      data: user.user
-   });
+  return sendSuccess(res, user.user, MESSAGES.USER.GOOGLE_LOGIN, HttpStatus.OK);
 
 });
   async logout(req: Request, res: Response) {
     res.clearCookie("accessToken");
     res.clearCookie("refreshToken")
-    res.status(HttpStatus.OK).json({success:true,MESSAGES:MESSAGES.USER.LOGOUT_SUCCESS})
+   return sendSuccess(res, null, MESSAGES.USER.LOGOUT_SUCCESS, HttpStatus.OK);
   }
 }

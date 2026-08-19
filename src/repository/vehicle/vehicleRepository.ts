@@ -14,7 +14,11 @@ export class VechileRepository implements IVehicleRepository{
         return await vehicle.save()
     }
     async update(id: string, data: Partial<IVehicle>): Promise<IVehicle | null> {
-        return await VehicleModel.findByIdAndUpdate(id,data,{new:true}).lean()
+        return await VehicleModel.findByIdAndUpdate(
+    id,
+    { $set: data },
+    { returnDocument: "after" } 
+  ).lean();
     }
     async delete(id: string): Promise<boolean> {
         const result =  await VehicleModel.findByIdAndDelete(id)

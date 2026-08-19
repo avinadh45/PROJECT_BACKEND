@@ -5,7 +5,9 @@ export const MESSAGES = {
     UNAUTHORIZED: "Unauthorized access",
     NOT_FOUND: "Resource not found",
     ACCOUNT_BLOCKED:"Your account is blocked ",
-     
+    VALIDATION_FAILED:"Validation failed",
+    PAYMENT_FAILED:"Payment verification failed",
+    ORDER_CREATE:"Order created"
   },
 
   USER: {
@@ -22,7 +24,14 @@ export const MESSAGES = {
     INVALID_OTP:"Invalid OTP",
     INVALID_PASSWORD:"Invalid password",
     EXPIRED:"reset token expired",
-    FAILED_UPDATE:"Failed to update user"
+    FAILED_UPDATE:"Failed to update user",
+    REGITER:"User registered successfully",
+    OTP_VERIFIED:"otp verified successfully",
+    REFRESH_TOKEN:"Token refreshed",
+    RESET_LINK: "Rest link sent to email",
+    DASHBOARD:"Dashboard loaded successfully",
+    PASSWORD_REST:"Password reset successfully",
+    GOOGLE_LOGIN:"Google login success"
   },
 
   SERVICE_CENTER: {
@@ -40,7 +49,23 @@ export const MESSAGES = {
     INVALID:"Invalid credentials",
     EXPIRED:"REST TOKEN EXpired",
     TOKEN_EXPIRED:"Refresh token required",
-    NO_ACCESS:"Service Center access only"
+    NO_ACCESS:"Service Center access only",
+    REGISTER_SUCCESS:"Registered successfully",
+    LOGIN_SUCCESS:"Login successfully",
+    VERIFICATION_STATUS:"Verification status fetched",
+    VERIFICATION_UPDATED:"Verification updated",
+    INVALID_FEE:"Invalid advanceFee",
+    FEE_UPDATE:"Update successfully",
+    SERVICE_EXIST:"Service already Exist",
+    SERVICE_ADDED:"Service added successfully",
+    MISSING_VEHICLE_OR_MODE:"Missing vehicle type or service mode",
+    SERVICE_STATUS_UPDATE:"Service status updated successfully",
+    SUBSCRIBED:"Subscribed successfully",
+    PROFILE_FETCHED:"Profile fetched successfully",
+    NO_WORKING_DAYS:"No working days added",
+    INVALID_WORKING_HOURS:"Invalid working days",
+    INVALID_AVAILABILITY_VALUES:"Invalid availability values",
+    AVIABILITY:"Availability updated successfully"
   },
 
   MECHANIC: {
@@ -65,7 +90,38 @@ export const MESSAGES = {
     INVALID:"Invalid Error",
     UNAUTHROISED:"unauthroised",
     ADMIN_ONLY:"Admin access only",
-    TOKEN_REQUIRED:"Refresh token required"
-  }
-
+    TOKEN_REQUIRED:"Refresh token required",
+    TOKEN_REFRESHED:"Token refreshed",
+    LOGOUT_SUCCESS:"Logout successfully",
+    CATEGORY_CREATED:"Category created",
+    UPDATE_CATEGORY:"Category updated",
+    BLOCK_CATEGORY:"Category status updated"
+  },
+    VEHICLE:{
+      VEHICLE_DOC_REQUIRED:"All documents are required",
+      SUCCESSFULLY_ADDED:"Vehicle added successfully",
+      VEHICLE_FETCHED:"Vehicle fetched successfully",
+      NOT_FOUND:"Vehicle not found",
+      UPDATED_SUCCESSFULLY:"Vehicle updated successFully",
+      VEHICEL_DELETE:"Vehicle deleted successfully"
+    },
+    SUBSCRIPTION:{
+      ALREADY_EXIST:"Subscription already exist",
+      CREATED:"Subscription created successfully",
+      SUBSCRIPTION_FETCH:"Subscription fetched successfully",
+      UPDATED:"Subscription updated successfully",
+      DELET_FAILED:"Deletion failed",
+      DELETED_SUCCESSFULLY:"Subscription deleted successfully",
+      INVALID_SUBSCRIPTION:"Invalid subscription",
+      INVALID_TIER:"Invalid tier"
+    },
+    SLOT:{
+      NO_AVAILABILITY_CONFIGURED:"No avaliability configured",
+      INCOMPLETE_AVAILABILITY:"Incomplete availability",
+      FETCHED_SUCCESSFULLY:"Slot fetched successfully",
+      BLOCKED_SLOT:"Slot blocked successfully",
+      UNBLOCK_SLOT:"Unblock slot successfully",
+      DAY_BLOCK:"Day blocked successfully",
+      FULL_DAY_UNBLOCKED:"Full day unblocked successfully" 
+    }
 }

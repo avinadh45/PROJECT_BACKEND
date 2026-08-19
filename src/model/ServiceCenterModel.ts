@@ -117,7 +117,7 @@ resetTokenExpiry: {
         ref: "Category"
       },
 
-      advanceFee: Number,
+      advanceFee: {type:Number,default:null},
 
       status: {
         type: String,

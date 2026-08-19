@@ -105,11 +105,10 @@ export class CategoryService implements ICategoryService {
 
     return CategoryMapper.toResponseDTO(data);
   }
-  async AlreadyExist(data: string): Promise<ICategory> {
-    const category = await this._readRepo.findByName(data)
-    if(!category){
-      throw new AppError("already here",HttpStatus.CONFLICT)
-    }
-    return category
-  } 
+  async checkNameExist(name: string): Promise<Boolean> {
+    const exist = await this._readRepo.findByName(name)
+    return !!exist
+  }
+
 }
+

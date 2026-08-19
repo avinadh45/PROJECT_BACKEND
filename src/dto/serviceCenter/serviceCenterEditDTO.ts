@@ -23,7 +23,7 @@ export interface ServiceCenterEditDTO {
 
 servicesOffered: {
   serviceId: string;
-  advanceFee: number;
+  advanceFee: number | null;
   status?: string;
   vehicleTypes: string[];
   serviceModes: string[];
