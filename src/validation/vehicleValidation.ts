@@ -1,8 +1,10 @@
 import { z } from "zod";
-
+import { VEHICLE_TYPES } from "../constants/vehicleTypes";
 export const createVehicleSchema = z.object({
 
-    vehicleType:z.string().min(1,"Vehicle type is required"),
+   vehicleType: z.enum(VEHICLE_TYPES, {
+    error: "Vehicle type must be one of: " + VEHICLE_TYPES.join(", "),
+  }),
     FuelType: z.string().min(1, "Fuel type is required"),
   brand: z.string().min(1, "Brand is required"),
   model: z.string().min(1, "Model is required"),
@@ -26,7 +28,9 @@ export const createVehicleSchema = z.object({
 export type CreateVehicleInput = z.infer<typeof createVehicleSchema>
 
 export const updateVehicleSchema = z.object({
-  vehicleType:         z.string().min(1, "Vehicle type is required").optional(),
+ vehicleType: z.enum(VEHICLE_TYPES, {
+    error: "Vehicle type must be one of: " + VEHICLE_TYPES.join(", "),
+  }).optional(),
   FuelType:            z.string().min(1, "Fuel type is required").optional(),
   brand:               z.string().min(1, "Brand is required").optional(),
   model:               z.string().min(1, "Model is required").optional(),

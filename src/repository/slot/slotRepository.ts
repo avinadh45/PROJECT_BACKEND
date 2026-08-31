@@ -61,4 +61,9 @@ async unblockFullDay(serviceCenterId: string, date: string): Promise<void> {
   
   await this.model.updateMany({serviceCenterId,date},{status:"available"})
 }
+
+ async incrementBookedCount(serviceCenterId: string, date: string, time: string): Promise<void> {
+  
+  await this.model.updateOne({serviceCenterId,date,time},{$inc:{bookedCount:1}})
+}
 }

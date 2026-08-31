@@ -65,6 +65,6 @@ export class SlotService implements ISlotService {
    }
    async unBlockFullDay(servicCenterId: string, date: string): Promise<void> {
      
-    await this._slotwrite.blockFullDay(servicCenterId,date)
+    await this._slotwrite.unblockFullDay(servicCenterId,date)
    }
 }

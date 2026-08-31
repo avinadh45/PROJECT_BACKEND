@@ -38,6 +38,11 @@ export class MechanicReadRepository extends BaseRepository<IUser> implements IMe
   };
 
   }
+  async findAvailableMechanic(garageId: string): Promise<IMechanic | null> {
+    
+   const filter : Record<string,any> = { role:"mechanic", garageId:new mongoose.Types.ObjectId(garageId),isBlocked:false}
+   return await UserModel.findOne(filter).lean() as IMechanic | null 
+  }
 
 }
 

@@ -13,4 +13,5 @@ export interface ISlotWriteRepository{
     unblockSlot(serviceCenterId:string,date:string,time:string):Promise<void> 
     blockFullDay(servicCenterId:string,date:string):Promise<void>
     unblockFullDay(serviceCenterId:string,date:string):Promise<void>
+    incrementBookedCount(serviceCenterId:string,date:string,time:string):Promise<void>
 }

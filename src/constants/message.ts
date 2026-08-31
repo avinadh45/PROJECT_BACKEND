@@ -123,5 +123,16 @@ export const MESSAGES = {
       UNBLOCK_SLOT:"Unblock slot successfully",
       DAY_BLOCK:"Day blocked successfully",
       FULL_DAY_UNBLOCKED:"Full day unblocked successfully" 
+    },
+    BOOKING:{
+      GARAGE_FETCHED:"Service centers fetched successfully",
+      NOT_AVAILABLE:"This slot is no longer available",
+      NO_SERVICE:"This service is not offered by the selected garage",
+      PAYMENT_VERIFICATION_FAIL:"Payment verification failed",
+      NOT_FOUND:"Booking not found",
+      SLOT_TAKEN:"Slot was taken before payment completed. You have not been charged for a confirmed booking.",
+      BOOKING_CONFIRMED:"Booking confirmed ",
+      ORDER_CREATE:"Order create successfully",
+      FETCHED:"Booking fetched successfully"
     }
 }

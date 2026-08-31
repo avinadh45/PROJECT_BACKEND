@@ -15,4 +15,5 @@ export interface    IServiceCenterRepository{
     addService(serviceCenterId:string,service:ServiceOfferedInput):Promise<IServiceCenter | null>
     checkExistingService(serviceCenterId:string,serviceId:string):Promise<boolean>
     toggleServiceStatus( serviceCenterId:string,serviceId:string,status:"active" | "inactive"):Promise<IServiceCenter | null>
+    findAvailableGarage(filter:{categoryId:string,vehicleType:string,serviceMode:string,latitude?:number,longitude?:number}):Promise<any[]>
 }

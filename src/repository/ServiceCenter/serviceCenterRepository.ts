@@ -174,4 +174,52 @@ export class ServiceCenterRepository implements IServiceCenterRepository {
       {arrayFilters:[{"elem.serviceId":serviceId}],returnDocument:"after"}
     ).populate("servicesOffered.serviceId","name icon advanceFee").lean()
   }
+  async findAvailableGarage(filter: { categoryId: string; vehicleType: string; serviceMode: string; latitude?: number; longitude?: number; }): Promise<any[]> {
+    console.log("findAvailableGarage filter:", filter);
+    const matchStage:Record<string,any>={
+      verificationStatus: "approved",
+      isBlocked: false,
+      "subscription.status":"active",
+      "subscription.endDate":{$gt: new Date()},
+      servicesOffered:{
+        $elemMatch:{
+          serviceId: new Types.ObjectId(filter.categoryId),
+          status:"active",
+          vehicleTypes:filter.vehicleType,
+          serviceModes:filter.serviceMode
+        },
+      },
+    };
+    const pipeline: any[] = []; 
+    if( filter.latitude !== undefined && filter.longitude !== undefined){
+      pipeline.push({
+        $geoNear:{
+          near:{type:"Point" , coordinates:[filter.longitude, filter.latitude]},
+          distanceField: "distanceInMeters",
+          spherical:true,
+          query:matchStage,
+        }
+      });
+    }else{
+      pipeline.push({$match:matchStage})
+    }
+    pipeline.push({
+      $project:{
+        garageName:"$providerProfile.garageName",
+        garageProfileImage:"$providerProfile.garageProfileImage",
+        formattedAddress:"$providerProfile.formattedAddress",
+        distanceInMeters:1,
+        matchedService:{
+          $first:{
+            $filter:{
+              input:"$servicesOffered",
+              as:"s",
+              cond:{$eq:["$$s.serviceId",new Types.ObjectId(filter.categoryId)]}
+            }
+          }
+        }
+      }
+    })
+    return ServiceCenter.aggregate(pipeline)
+  }
 }
