@@ -14,6 +14,8 @@ import { getRazorpayInstance } from "../../utils/razorpay";
 import mongoose, { Types } from "mongoose";
 import crypto from "crypto"
 import { IMechanicReadRepository } from "../../interface/Machanic/IMechanicReadRepository";
+import { BookingSummaryDTO } from "../../dto/booking/BookingSummaryDTO";
+import { PaginatedResponse } from "../../interface/common/pagination";
 
 export class BookingService implements IBookingService{
 
@@ -124,5 +126,11 @@ export class BookingService implements IBookingService{
             throw new AppError(MESSAGES.BOOKING.NOT_FOUND,HttpStatus.NOT_FOUND)
         }
         return BookingMapper.toConfirmationDTO(booking)
+    }
+
+    async getServiceCenterBookings(serviceCenterId: string, page: number, limit: number, status?: string, search?: string): Promise<PaginatedResponse<BookingSummaryDTO>> {
+        
+        const result = await this._bookingRepo.findByServiceCenter(serviceCenterId,page,limit,status,search)
+        return { ...result, data:result.data.map(BookingMapper.toSummaryDTO)}
     }
 }   

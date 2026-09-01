@@ -6,6 +6,7 @@ import {
   IBookingWriteRepository,
   IBookkingReadRepository,
 } from "../../interface/Booking/IBookingRepository";
+import { PaginatedResponse } from "../../interface/common/pagination";
 
 export class BookingRepository
   implements IBookingWriteRepository, IBookkingReadRepository
@@ -41,5 +42,56 @@ export class BookingRepository
   async findById(bookingId: string): Promise<IBooking | null> {
     
     return await Booking.findById(bookingId)
+  }
+  async findByServiceCenter(serviceCenterId: string, page: number, limit: number, status?: string, search?: string): Promise<PaginatedResponse<any>> {
+    
+    const skip = ( page - 1)*limit 
+    const matchStage: Record<string,any>={serviceCenterId: new Types.ObjectId(serviceCenterId)}
+
+    if(status){
+      matchStage.status = status
+    }
+
+    const pipeline: any[]=[
+      {$match: matchStage},
+      {$sort:{createdAt: -1}},
+      {
+       $lookup:{from:"user",localField:"userId",foreignField:"_id",as:"customer"},},
+      {$unwind:"$customer"},
+      {$lookup:{from:"vehicles",localField:"vehicleId",foreignField:"_id",as:"vehicle"},},
+      {$unwind:"$vehicle"},
+      {$lookup:{from:"categories",localField:"categoryId",foreignField: "_id",as:"category"},},
+      {$unwind:"$category"},
+      {$lookup:{from:"users",localField:"mechanicId",foreignField: "_id",as:"mechanic"},},
+      ...(search?[{$match:{$or:[
+          {"customer.name":{$regex:search, $options:"i"}},
+          { "vehicle.RegistrationNumber":{$regex:search, $options: "i"}},
+          { "category.name":{$regex:search, $options: "i"}}
+      ]}}]:[]),
+      { $facet:{
+        date:[
+          {$skip:skip},
+          {$limit:limit},
+          {
+            $project:{
+              _id:1,
+              customerName:"$customer.name",
+              vehicleRegistrationNumber: "$vehicle.RegistrationNumber",
+              categoryName: "$category.name",
+              visitType:1,
+              schedule:1,
+              mechanicName:{$first:"$mechanic.name"},
+              status:1,
+              advancePayment:1
+            },
+          },
+        ],
+        totalCount: [{$count:"count"}]
+      }}
+    ];
+    const result = await Booking.aggregate(pipeline);
+    const data = result[0]?.data??[];
+    const total = result[0]?.totalCount?.[0]?.count ?? 0;
+    return { data,total,page,limit,totalPages:Math.max(1,Math.ceil(total/limit))}
   }
 }

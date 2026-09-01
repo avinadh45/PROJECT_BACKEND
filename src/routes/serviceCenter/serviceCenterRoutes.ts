@@ -13,6 +13,12 @@ import { upload } from "../../middleware/upload";
 import { validate } from "../../middleware/userValidation";
 import { updateAvailabilitySchema } from "../../validation/updateAvilability";
 import { SlotRepository } from "../../repository/slot/slotRepository";
+import { BookingController } from "../../controller/booking/bookingController";
+import { BookingService } from "../../service/booking/bookingService";
+import { BookingRepository } from "../../repository/booking/BookingRepository";
+
+
+
 const router = express.Router()
 
 const mailService = new NodeMailerService();
@@ -21,9 +27,13 @@ const categoryRepo =  new CategoryRepository(Category)
 const readRepository = new MechanicReadRepository();
 const writeRepository = new MechanicWriteRepository();
 const slotRepository = new SlotRepository()
+const bookingRepo = new BookingRepository()
+const bookingService = new BookingService(repository,bookingRepo,slotRepository,readRepository)
+const bookingController = new BookingController(bookingService)
 const service = new ServiceCenterService(repository,mailService,categoryRepo,slotRepository)
 const mechanicService = new MechanicService(readRepository,writeRepository)
 const controller = new ServiceCenterController(service,mechanicService)
+
 
 router.post("/register",upload.fields([{name:"garageLicense",maxCount:1},{name:"ownerIdProof",maxCount:1}]),controller.register.bind(controller))
 router.post("/login",controller.login)
@@ -43,6 +53,7 @@ router.get("/categories",controller.getCategories)
 router.patch("/status/:serviceId",controller.toggleServiceStatus)
 router.get("/profile",controller.getProfile)
 router.patch("/availability",validate(updateAvailabilitySchema),controller.updateAvailability)
+router.get("/bookings",bookingController.getServiceCenterBookings)
 
 
 export default router

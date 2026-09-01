@@ -34,4 +34,5 @@ router.post("/verify-payment",authMiddleware, controller.verifyPayment)
 router.get("/:bookingId",authMiddleware,controller.getBooking)
 
 
+
 export default router

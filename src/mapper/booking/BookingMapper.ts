@@ -1,4 +1,5 @@
 import { BookingConfirmationDTO } from "../../dto/booking/BookingOrderDTO";
+import { BookingSummaryDTO } from "../../dto/booking/BookingSummaryDTO";
 import { GarageSearchResultDTO } from "../../dto/booking/GarageResultDTO";
 import { IBooking } from "../../interface/Booking/IBookking";
 
@@ -30,6 +31,19 @@ export class BookingMapper {
         status:booking.advancePayment.status,
         paidAt:booking.advancePayment.paidAt
       }
+    }
+  }
+  static toSummaryDTO(data:any):BookingSummaryDTO{
+    return{
+      id:data._id.toString(),
+      customerName: data.customerName,
+      vehicleRegistrationNumber:data.vehicleRegistrationNumber,
+      categoryName:data.categoryName,
+      visitType:data.visitType,
+      schedule:data.schedule,
+      mechanicName:data.mechanicName ?? null,
+      status:data.status,
+      advancePaymentStatus:data.advancePayment.status
     }
   }
 }
