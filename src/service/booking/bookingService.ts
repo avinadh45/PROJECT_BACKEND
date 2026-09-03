@@ -133,4 +133,9 @@ export class BookingService implements IBookingService{
         const result = await this._bookingRepo.findByServiceCenter(serviceCenterId,page,limit,status,search)
         return { ...result, data:result.data.map(BookingMapper.toSummaryDTO)}
     }
+    async getMechanicBooking(mechanicId: string, page: number, limit: number, status?: string, search?: string): Promise<PaginatedResponse<BookingSummaryDTO>> {
+        
+        const result = await this._bookingRepo.findByMechanic(mechanicId,page,limit,status,search)
+        return {...result,data:result.data.map(BookingMapper.toSummaryDTO)}
+    }
 }   

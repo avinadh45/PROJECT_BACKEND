@@ -62,4 +62,16 @@ getServiceCenterBookings = asyncHandler(async(req:Request,res:Response)=>{
   const result = await this._bookingService.getServiceCenterBookings(serviceCenterId,page,limit,status,search) 
   sendSuccess(res,result,MESSAGES.BOOKING.FETCHED,HttpStatus.OK)
 })
+
+getMechanicBooking = asyncHandler(async(req:Request,res:Response)=>{
+
+  const mechanicId = (req as any).mechanic.id 
+  const page = Number(req.query.page) || 1 
+  const limit = Number(req.query.limit) || 5 
+  const search = req.query.search as string | undefined 
+  const status = req.query.status as string | undefined 
+
+  const result = await this._bookingService.getMechanicBooking(mechanicId,page,limit,status,search)
+  sendSuccess(res,result,MESSAGES.BOOKING.FETCHED,HttpStatus.OK)
+})
 }

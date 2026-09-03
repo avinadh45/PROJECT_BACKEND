@@ -1,6 +1,6 @@
 export interface SlotResponseDTO{
     time:string;
     maxBooking:number;
-    bookingCount:number;
+    bookedCount:number;
     status: "available" | "full" | "blocked";
 }

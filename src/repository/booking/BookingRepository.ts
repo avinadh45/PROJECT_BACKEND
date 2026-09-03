@@ -45,6 +45,8 @@ export class BookingRepository
   }
   async findByServiceCenter(serviceCenterId: string, page: number, limit: number, status?: string, search?: string): Promise<PaginatedResponse<any>> {
     
+    console.log("findByServiceCenter called with:", { serviceCenterId, page, limit, status, search });
+
     const skip = ( page - 1)*limit 
     const matchStage: Record<string,any>={serviceCenterId: new Types.ObjectId(serviceCenterId)}
 
@@ -52,11 +54,13 @@ export class BookingRepository
       matchStage.status = status
     }
 
+    console.log("matchStage:", matchStage);
+
     const pipeline: any[]=[
       {$match: matchStage},
       {$sort:{createdAt: -1}},
       {
-       $lookup:{from:"user",localField:"userId",foreignField:"_id",as:"customer"},},
+       $lookup:{from:"users",localField:"userId",foreignField:"_id",as:"customer"},},
       {$unwind:"$customer"},
       {$lookup:{from:"vehicles",localField:"vehicleId",foreignField:"_id",as:"vehicle"},},
       {$unwind:"$vehicle"},
@@ -69,7 +73,7 @@ export class BookingRepository
           { "category.name":{$regex:search, $options: "i"}}
       ]}}]:[]),
       { $facet:{
-        date:[
+        data:[
           {$skip:skip},
           {$limit:limit},
           {
@@ -90,8 +94,78 @@ export class BookingRepository
       }}
     ];
     const result = await Booking.aggregate(pipeline);
+    console.log("full pipeline:", JSON.stringify(pipeline, null, 2));
+     console.log("aggregate raw result:", JSON.stringify(result, null, 2));
     const data = result[0]?.data??[];
     const total = result[0]?.totalCount?.[0]?.count ?? 0;
     return { data,total,page,limit,totalPages:Math.max(1,Math.ceil(total/limit))}
+  }
+  async findByMechanic(mechanicId: string, page: number, limit: number, status?: string, search?: string): Promise<PaginatedResponse<any>> {
+    
+    const skip = (page - 1) * limit 
+    const matchStage :Record<string,any> = {mechanicId:new Types.ObjectId(mechanicId)}
+
+    if(status){ matchStage.status = status}
+
+    const pipeline:any[]=[{$match:matchStage},{$sort:{createAt:1}},
+      { $lookup:{
+        from:"users",
+        localField:"userId",
+        foreignField:"_id",
+        as:"customer"
+      }},
+      {$unwind:"$customer"},
+      {
+        $lookup:{
+          from:"vehicles",
+          localField:"vehicleId",
+          foreignField:"_id",
+          as:"vehicle"
+        }
+      },
+      {$unwind:"$vehicle"},
+      {
+        $lookup:{
+          from:"categories",
+          localField:"categoryId",
+          foreignField:"_id",
+          as:"category"
+        }
+      },
+      {$unwind:"$category"},
+      ...(search?[{
+        $match:{$or:[{"customer.name":{$regex:search,$options:"i"}},
+           {"vehicle.RegistrationNumber":{$regex:search,$options:"i"}},
+           {"category.name":{$regex:search,$options:"i"}}
+        ]}
+      }]:[]),
+      {
+        $facet:{data:[{$skip:skip},{$limit:limit},{
+          $project:{
+            _id:1,
+            customerName:"$customer.name",
+            vehicleRegistrationNumber:"$vehicle.Registraction",
+            categoryName:"$category.name",
+            visitType: 1,
+              schedule: 1,
+              status: 1,
+              advancePayment: 1,
+          }
+        }],
+        totalCount:[{$count:"count"}]
+      }
+      }
+    ];;
+    const result =  await Booking.aggregate(pipeline)
+    const data = result[0]?.data ?? [];
+    const total = result[0]?.totalCount?.[0]?.count ?? 0 
+    
+    return {
+      data,
+      total,
+      page,
+      limit,
+      totalPages:Math.max(1,Math.ceil(total/limit))
+    }
   }
 }

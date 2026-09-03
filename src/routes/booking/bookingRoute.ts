@@ -13,6 +13,7 @@ import { SlotService } from "../../service/slot/slotService"
 import { BookingRepository } from "../../repository/booking/BookingRepository"
 import { MechanicReadRepository } from "../../repository/mechanic/mechanicReadRepository"
 
+
 const router = express.Router()
 const repo = new CategoryRepository(Category)
 const serviceCenterRepo = new ServiceCenterRepository()

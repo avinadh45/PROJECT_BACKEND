@@ -8,6 +8,7 @@ export interface IBookkingReadRepository{
     getAdvanceFeeForService(serviceCenterId:string,categoryId:string):Promise<number | null>
     findById(bookingId:string):Promise<IBooking | null>
     findByServiceCenter(serviceCenterId:string,page:number,limit:number,status?:string,search?:string):Promise<PaginatedResponse<any>>
+    findByMechanic(mechanicId:string,page:number,limit:number,status?:string,search?:string):Promise<PaginatedResponse<any>>
 }
 
 export interface IBookingWriteRepository{

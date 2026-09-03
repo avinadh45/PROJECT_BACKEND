@@ -9,7 +9,7 @@ export class MechanicController {
   constructor(private mechanicService: IMechanicService) {}
 
   createMechanic = asyncHandler(async (req: Request, res: Response) => {
-    let serviceCenterId = (req as any).user?.id;
+    let serviceCenterId = (req as any).serviceCenter?.id;
     if (!serviceCenterId) {
       return res.status(HttpStatus.UNAUTHORIZED).json({
         success: false,

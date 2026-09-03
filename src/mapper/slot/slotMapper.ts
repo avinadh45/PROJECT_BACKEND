@@ -5,8 +5,8 @@ export class SlotMapper {
   static toResponseDTO(slot: ISlot): SlotResponseDTO {
     return {
       time: slot.time,
-      maxBooking: slot.MaxBooking,
-      bookingCount: slot.bookedCount,
+      maxBooking: slot.MaxBooking, 
+     bookedCount: slot.bookedCount,
       status: slot.status,
     };
   }

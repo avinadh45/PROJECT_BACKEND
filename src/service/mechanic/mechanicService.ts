@@ -26,7 +26,7 @@ export class MechanicService implements IMechanicService {
       throw  new AppError(message,HttpStatus.BAD_REQUEST)
     }
 
-    const { name,email,password} = parsed.data
+    const { name,email,password,garageId} = parsed.data
 
     const existing = await this._readRepository.findByEmail(data.email);
     if (existing) {
@@ -39,6 +39,7 @@ export class MechanicService implements IMechanicService {
       name,
       email,
       password: hashedPassword,
+      garageId
     });
     const newMechanic = await this._writeRepository.create(entity);
     return MachanicMapper.toResponse(newMechanic);

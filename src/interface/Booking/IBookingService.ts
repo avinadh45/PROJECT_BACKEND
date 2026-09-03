@@ -10,4 +10,5 @@ export interface IBookingService {
     verifyBookingPayment(userId:string,dto:VerifyBookingPaymentDTO):Promise<BookingConfirmationDTO>
     getBooking(userId:string,bookingId:string):Promise<BookingConfirmationDTO>
     getServiceCenterBookings(serviceCenterId:string,page:number,limit:number,status?:string,search?:string):Promise<PaginatedResponse<BookingSummaryDTO>>
+    getMechanicBooking(mechanicId:string,page:number,limit:number,status?:string,search?:string):Promise<PaginatedResponse<BookingSummaryDTO>>
 }
