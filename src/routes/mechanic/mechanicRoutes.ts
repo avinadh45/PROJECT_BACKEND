@@ -28,5 +28,6 @@ router.post("/login", controller.loginMechanic.bind(controller));
 router.get('/list',verifyServiceCenter,controller.getMechanic.bind(controller))
 router.get('/dashboard',verifyMechanic,controller.getDashboard)
 router.get("/bookings",verifyMechanic,bookingController.getMechanicBooking)
+router.get("/bookings/:bookingId",verifyMechanic,bookingController.getBookingInMechanic)
 
 export default router;

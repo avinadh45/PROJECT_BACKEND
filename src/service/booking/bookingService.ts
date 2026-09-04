@@ -16,6 +16,7 @@ import crypto from "crypto"
 import { IMechanicReadRepository } from "../../interface/Machanic/IMechanicReadRepository";
 import { BookingSummaryDTO } from "../../dto/booking/BookingSummaryDTO";
 import { PaginatedResponse } from "../../interface/common/pagination";
+import { BookingDetailDTO } from "../../dto/booking/BookingDetailsDTO";
 
 export class BookingService implements IBookingService{
 
@@ -137,5 +138,14 @@ export class BookingService implements IBookingService{
         
         const result = await this._bookingRepo.findByMechanic(mechanicId,page,limit,status,search)
         return {...result,data:result.data.map(BookingMapper.toSummaryDTO)}
+    }
+
+    async getBookingInMechanci(mechanicId: string, bookingId: string): Promise<BookingDetailDTO> {
+        
+        const data = await this._bookingRepo.findMechanicBookingDetails(bookingId,mechanicId)
+        if(!data){
+            throw new AppError(MESSAGES.BOOKING.NOT_FOUND,HttpStatus.NOT_FOUND)
+        }
+        return BookingMapper.toDetailDTO(data)
     }
 }   

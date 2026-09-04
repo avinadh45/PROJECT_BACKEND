@@ -20,6 +20,7 @@ export interface VerifyBookingPaymentDTO {
   razorpayPaymentId: string;
   razorpaySignature: string;
 }
+
 export interface BookingConfirmationDTO {
   id: string;
   status: string;

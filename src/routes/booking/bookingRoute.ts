@@ -14,6 +14,7 @@ import { BookingRepository } from "../../repository/booking/BookingRepository"
 import { MechanicReadRepository } from "../../repository/mechanic/mechanicReadRepository"
 
 
+
 const router = express.Router()
 const repo = new CategoryRepository(Category)
 const serviceCenterRepo = new ServiceCenterRepository()
@@ -33,6 +34,7 @@ router.get("/:serviceCenterId/slots",authMiddleware,slotController.getAvailableS
 router.post("/create-order",authMiddleware,controller.createOrder)
 router.post("/verify-payment",authMiddleware, controller.verifyPayment)
 router.get("/:bookingId",authMiddleware,controller.getBooking)
+
 
 
 

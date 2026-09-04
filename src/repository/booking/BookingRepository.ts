@@ -168,4 +168,62 @@ export class BookingRepository
       totalPages:Math.max(1,Math.ceil(total/limit))
     }
   }
+  async findMechanicBookingDetails(bookingId: string, mechanicId: string): Promise<any | null> {
+      console.log("repo received bookingId:", bookingId, typeof bookingId)
+  console.log("repo received mechanicId:", mechanicId, typeof mechanicId)
+    const result = await Booking.aggregate([
+    {
+      $match: {
+        _id: new Types.ObjectId(bookingId),
+        mechanicId: new Types.ObjectId(mechanicId),
+      },
+    },
+    {
+      $lookup: {
+        from: "users",
+        localField: "userId",
+        foreignField: "_id",
+        as: "customer",
+      },
+    },
+    { $unwind: "$customer" },
+    {
+      $lookup: {
+        from: "vehicles",
+        localField: "vehicleId",
+        foreignField: "_id",
+        as: "vehicle",
+      },
+    },
+    { $unwind: "$vehicle" },
+    {
+      $lookup: {
+        from: "categories",
+        localField: "categoryId",
+        foreignField: "_id",
+        as: "category",
+      },
+    },
+    { $unwind: "$category" },
+    {
+      $project: {
+        status: 1,
+        visitType: 1,
+        schedule: 1,
+        additionalInfo: 1,
+        job: 1,
+        customerName: "$customer.name",
+        customerPhone: "$customer.phoneNumber",
+        vehicleRegistrationNumber: "$vehicle.RegistrationNumber",
+        vehicleType: "$vehicle.vehicleType",
+        vehicleBrand: "$vehicle.brand",
+        vehicleModel: "$vehicle.model",
+        vehiclePhotoUrl: "$vehicle.documents.vehicleImage",
+        categoryName: "$category.name",
+      },
+    },
+  ]);
+   console.log("aggregate result:", result)
+  return result[0] ?? null;
+  }
 }

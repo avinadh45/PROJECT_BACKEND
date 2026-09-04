@@ -1,3 +1,4 @@
+import { BookingDetailDTO } from "../../dto/booking/BookingDetailsDTO";
 import { BookingConfirmationDTO, BookingOrderDTO, BookingOrderResultDTO, VerifyBookingPaymentDTO } from "../../dto/booking/BookingOrderDTO";
 import { BookingSummaryDTO } from "../../dto/booking/BookingSummaryDTO";
 import { GarageFilterDTO } from "../../dto/booking/GarageFilterDTO";
@@ -11,4 +12,5 @@ export interface IBookingService {
     getBooking(userId:string,bookingId:string):Promise<BookingConfirmationDTO>
     getServiceCenterBookings(serviceCenterId:string,page:number,limit:number,status?:string,search?:string):Promise<PaginatedResponse<BookingSummaryDTO>>
     getMechanicBooking(mechanicId:string,page:number,limit:number,status?:string,search?:string):Promise<PaginatedResponse<BookingSummaryDTO>>
+    getBookingInMechanci(mechanicId:string,bookingId:string):Promise<BookingDetailDTO>
 }

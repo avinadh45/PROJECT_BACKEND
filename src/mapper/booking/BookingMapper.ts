@@ -2,6 +2,7 @@ import { BookingConfirmationDTO } from "../../dto/booking/BookingOrderDTO";
 import { BookingSummaryDTO } from "../../dto/booking/BookingSummaryDTO";
 import { GarageSearchResultDTO } from "../../dto/booking/GarageResultDTO";
 import { IBooking } from "../../interface/Booking/IBookking";
+import { BookingDetailDTO } from "../../dto/booking/BookingDetailsDTO";
 
 export class BookingMapper {
   static toSearchResultDTO(r: any): GarageSearchResultDTO {
@@ -25,6 +26,7 @@ export class BookingMapper {
       vehicleId:booking.vehicleId.toString(),
       categoryId:booking.categoryId.toString(),
       visitType:booking.visitType,
+      
       schedule:booking.schedule,
       advancePayment:{
         amount:booking.advancePayment.amount,
@@ -46,4 +48,22 @@ export class BookingMapper {
       advancePaymentStatus:data.advancePayment.status
     }
   }
+  static toDetailDTO(raw: any): BookingDetailDTO {
+  return {
+    id: raw._id.toString(),
+    status: raw.status,
+    visitType: raw.visitType,
+    customerName: raw.customerName,
+    customerPhone: raw.customerPhone,
+    vehicleRegistrationNumber: raw.vehicleRegistrationNumber,
+    vehicleType: raw.vehicleType,
+    vehicleBrand: raw.vehicleBrand,
+    vehicleModel: raw.vehicleModel,
+    vehiclePhotoUrl: raw.vehiclePhotoUrl ?? null,
+    categoryName: raw.categoryName,
+    schedule: raw.schedule,
+    additionalInfo: raw.additionalInfo ?? null,
+    job: raw.job ?? null,
+  };
+}
 }

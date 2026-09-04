@@ -74,4 +74,13 @@ getMechanicBooking = asyncHandler(async(req:Request,res:Response)=>{
   const result = await this._bookingService.getMechanicBooking(mechanicId,page,limit,status,search)
   sendSuccess(res,result,MESSAGES.BOOKING.FETCHED,HttpStatus.OK)
 })
+
+getBookingInMechanic = asyncHandler(async(req:Request,res:Response)=>{
+  console.log("full req.params:", req.params)
+   const mechanicId = (req as any).mechanic.id
+  const { bookingId } = req.params 
+
+  const result = await this._bookingService.getBookingInMechanci(mechanicId,bookingId as string) 
+  sendSuccess(res,result,MESSAGES.BOOKING.FETCHED,HttpStatus.OK)
+})
 }

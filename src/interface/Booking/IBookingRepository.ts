@@ -9,6 +9,7 @@ export interface IBookkingReadRepository{
     findById(bookingId:string):Promise<IBooking | null>
     findByServiceCenter(serviceCenterId:string,page:number,limit:number,status?:string,search?:string):Promise<PaginatedResponse<any>>
     findByMechanic(mechanicId:string,page:number,limit:number,status?:string,search?:string):Promise<PaginatedResponse<any>>
+    findMechanicBookingDetails(bookingId:string,mechanicId:string):Promise<any | null>
 }
 
 export interface IBookingWriteRepository{
