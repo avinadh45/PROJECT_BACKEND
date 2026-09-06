@@ -10,6 +10,7 @@ import { BookingService } from "../../service/booking/bookingService";
 import { BookingController } from "../../controller/booking/bookingController";
 import { SlotRepository } from "../../repository/slot/slotRepository";
 import { ServiceCenterRepository } from "../../repository/ServiceCenter/serviceCenterRepository";
+import { upload } from "../../middleware/upload";
 
 const router = express.Router();
 
@@ -29,5 +30,8 @@ router.get('/list',verifyServiceCenter,controller.getMechanic.bind(controller))
 router.get('/dashboard',verifyMechanic,controller.getDashboard)
 router.get("/bookings",verifyMechanic,bookingController.getMechanicBooking)
 router.get("/bookings/:bookingId",verifyMechanic,bookingController.getBookingInMechanic)
+router.patch("/bookings/:bookingId/job",verifyMechanic,bookingController.updateMechanicJob)
+router.patch("/bookings/:bookingId/status",verifyMechanic,bookingController.updateStatus)
+router.patch("/bookings/:bookingId/proof",verifyMechanic,upload.single("proofImage"),bookingController.uploadProof)
 
 export default router;

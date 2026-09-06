@@ -22,4 +22,9 @@ export interface BookingDetailDTO {
     estimatedCost: number;
     description: any[];
   } | null;
+  proof: {
+  imageUrl: string;
+  uploadedBy: string;
+  uploadedAt: string;
+} | null;
 }

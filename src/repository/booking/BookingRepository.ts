@@ -1,6 +1,6 @@
 import { Types } from "mongoose";
 import Booking from "../../model/bookingModel";
-import { IBooking } from "../../interface/Booking/IBookking";
+import { IBooking, IJobDescriptionItem } from "../../interface/Booking/IBookking";
 import ServiceCenter from "../../model/ServiceCenterModel";
 import {
   IBookingWriteRepository,
@@ -225,5 +225,58 @@ export class BookingRepository
   ]);
    console.log("aggregate result:", result)
   return result[0] ?? null;
+  }
+ async updateJobItems(bookingId: string, mechanicId: string, items: IJobDescriptionItem[]): Promise<IBooking | null> {
+    
+    const estimateCost = items.reduce((sum,items)=> sum+(items.initalCost || 0),0)
+
+    return Booking.findOneAndUpdate({_id:bookingId,mechanicId:new Types.ObjectId(mechanicId)},
+    {$set:{"job.description":items,"job.estimatedCost":estimateCost}},
+    {returnDocument:"after"}
+  )
+  }
+ async updateStatus(bookingId: string, mechanicId: string, status: string, updateBy: string): Promise<IBooking | null> {
+    return Booking.findOneAndUpdate({_id:bookingId,mechanicId:new Types.ObjectId(mechanicId)},{$set:{status},
+      $push:{statusTimeline:{status,updateBy,at: new Date()}}
+  },
+  {new:true}
+)
+  }
+
+  async uploadProof(bookingId: string, mechanicId: string, imageUrl: string): Promise<IBooking | null> {
+    
+    return await Booking.findOneAndUpdate({_id:bookingId,mechanicId: new Types.ObjectId(mechanicId)},
+    {$set:{proof:{imageUrl,uploadedBy:mechanicId,uploadedAt: new Date().toISOString()}}},
+    {returnDocument:"after"}
+  )
+  }
+  async findServiceCenterBookingDetails(bookingId: string, serviceCenterId: string): Promise<any | null> {
+    
+    const result = await Booking.aggregate([{$match:{_id: new Types.ObjectId(bookingId),serviceCenterId:new Types.ObjectId(serviceCenterId)}},
+      {$lookup:{from:"users",localField:"userId",foreignField:"_id",as:"customer"}},{ $unwind:"$customer"},
+      {$lookup:{from:"vehicles",localField:"vehicleId",foreignField:"_id",as:"vehicle"}},{ $unwind:"$vehicle"},
+      {$lookup:{from:"categories",localField:"categoryId",foreignField:"_id",as:"category"}},{ $unwind:"$category"},
+      {$project:{
+        status:1,
+        visitType:1,
+        schedule:1,
+        additionalInfo:1,
+        job:1,
+        proof:1,
+        statusTimeLine:1,
+        advancePayment:1,
+        pickupLocation:1,
+        customerName:"$customer.name",
+        customerPhone:"$customer.phoneNumber",
+        vehicleRegistractionNumber:"$vehicle.RegistractionNumber",
+        vehicleType:"$vehicle.vehicleType",
+        vehicleBrand:"$vehicle.brand",
+        vehicleModel:"$vehicle.model",
+        vehiclePhotoUrl:"$vehicle.documents.vehicleImage",
+        categoryName:"$category.name",
+        mechanicName:{$first:"$mechanic.name"}
+      }}
+    ])
+    return result[0] ?? null
   }
 }

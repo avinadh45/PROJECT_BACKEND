@@ -17,6 +17,8 @@ import { IMechanicReadRepository } from "../../interface/Machanic/IMechanicReadR
 import { BookingSummaryDTO } from "../../dto/booking/BookingSummaryDTO";
 import { PaginatedResponse } from "../../interface/common/pagination";
 import { BookingDetailDTO } from "../../dto/booking/BookingDetailsDTO";
+import { IJobDescriptionItem } from "../../interface/Booking/IBookking";
+import { BookingServiceCenterDetailDTO } from "../../dto/booking/BookingServiceCenterDetailDTO";
 
 export class BookingService implements IBookingService{
 
@@ -147,5 +149,47 @@ export class BookingService implements IBookingService{
             throw new AppError(MESSAGES.BOOKING.NOT_FOUND,HttpStatus.NOT_FOUND)
         }
         return BookingMapper.toDetailDTO(data)
+    }
+
+    async updateMechanicJobItems(mechanicId: string, bookingId: string, items: IJobDescriptionItem[]): Promise<BookingDetailDTO> {
+        
+        const update = await this._bookingRepo.updateJobItems(bookingId,mechanicId,items)
+        if(!update){
+            throw new AppError(MESSAGES.BOOKING.NOT_FOUND,HttpStatus.NOT_FOUND)
+        }
+        const details = await this._bookingRepo.findMechanicBookingDetails(bookingId,mechanicId)
+        return BookingMapper.toDetailDTO(details)
+    }
+
+    async updateStatus(bookingId: string, mechanicId: string, status: string): Promise<BookingDetailDTO> {
+
+        const statuses = ["assigned", "in-progress", "completed"]; 
+        if(!statuses.includes(status)){
+
+        }
+        const update = await this._bookingRepo.updateStatus(bookingId,mechanicId,status,mechanicId)
+        if(!update){
+            throw new AppError(MESSAGES.BOOKING.NOT_FOUND,HttpStatus.NOT_FOUND)
+        }
+        const details = await this._bookingRepo.findMechanicBookingDetails(bookingId,mechanicId)
+        return BookingMapper.toDetailDTO(details)
+    }
+
+    async uploadProof(bookingId: string, mechanicId: string, imageUrl: string): Promise<BookingDetailDTO> {
+        
+        const upload = await this._bookingRepo.uploadProof(bookingId,mechanicId,imageUrl)
+        if(!upload){
+            throw new AppError(MESSAGES.BOOKING.NOT_FOUND,HttpStatus.NOT_FOUND)
+        }
+        const details = await this._bookingRepo.findMechanicBookingDetails(bookingId,mechanicId)
+        return BookingMapper.toDetailDTO(details)
+    }
+    async getServiceCenterBookingDetails(bookingId: string, serviceCenterId: string): Promise<BookingServiceCenterDetailDTO> {
+        
+        const data = await this._bookingRepo.findServiceCenterBookingDetails(bookingId,serviceCenterId)
+        if(!data){
+            throw new AppError(MESSAGES.BOOKING.NOT_FOUND,HttpStatus.NOT_FOUND)
+        }
+        return BookingMapper.toServiceCenterDetailDTO(data)
     }
 }   

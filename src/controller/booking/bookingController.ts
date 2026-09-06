@@ -2,6 +2,7 @@ import { MESSAGES } from "../../constants/message";
 import { HttpStatus } from "../../enums/httpstatus";
 import { IBookingService } from "../../interface/Booking/IBookingService";
 import { sendSuccess } from "../../utils/apiResponse";
+import { AppError } from "../../utils/AppError";
 import { asyncHandler } from "../../utils/asyncHandler";
 import { Request, Response } from "express";
 
@@ -76,11 +77,54 @@ getMechanicBooking = asyncHandler(async(req:Request,res:Response)=>{
 })
 
 getBookingInMechanic = asyncHandler(async(req:Request,res:Response)=>{
-  console.log("full req.params:", req.params)
+  
    const mechanicId = (req as any).mechanic.id
   const { bookingId } = req.params 
 
   const result = await this._bookingService.getBookingInMechanci(mechanicId,bookingId as string) 
+  sendSuccess(res,result,MESSAGES.BOOKING.FETCHED,HttpStatus.OK)
+})
+updateMechanicJob = asyncHandler(async(req:Request,res:Response)=>{
+
+const mechanicId = (req as any).mechanic.id 
+const { bookingId }= req.params
+ console.log("booking id in job",bookingId);
+ 
+const { items } = req.body
+const result = await this._bookingService.updateMechanicJobItems(mechanicId,bookingId as string, items)
+sendSuccess(res,result,MESSAGES.BOOKING.JOBDESCRIPTION_UPDATE,HttpStatus.OK)
+
+})
+
+updateStatus = asyncHandler(async(req:Request,res:Response)=>{
+
+const mechanicId = (req as any).mechanic.id 
+const { bookingId }= req.params 
+ console.log("booking id in status",bookingId);
+const { status } = req.body 
+const result = await this._bookingService.updateStatus(bookingId as string,mechanicId,status)
+sendSuccess(res,result,MESSAGES.BOOKING.STATUS_UPDATE,HttpStatus.OK)
+
+})
+
+uploadProof = asyncHandler(async(req:Request,res:Response)=>{
+
+  const mechanicId = (req as any).mechanic.id 
+const { bookingId }= req.params 
+
+if(!req.file){
+  throw new AppError(MESSAGES.BOOKING.PROOF_IMAGE_REQUIRED,HttpStatus.BAD_REQUEST)
+}
+const image = (req.file as any).path 
+const result = await this._bookingService.uploadProof(bookingId as string,mechanicId,image)
+sendSuccess(res,result,MESSAGES.BOOKING.PROOF_UPLOADED,HttpStatus.OK)
+})
+
+getServiceCenterBookingDetails = asyncHandler(async(req:Request,res:Response)=>{
+
+  const serviceCenterId = (req as any).serviceCenter.id
+  const { bookingId } = req.params 
+  const result = await this._bookingService.getServiceCenterBookingDetails(bookingId as string,serviceCenterId)
   sendSuccess(res,result,MESSAGES.BOOKING.FETCHED,HttpStatus.OK)
 })
 }

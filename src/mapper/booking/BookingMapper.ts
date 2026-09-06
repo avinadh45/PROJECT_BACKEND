@@ -3,6 +3,7 @@ import { BookingSummaryDTO } from "../../dto/booking/BookingSummaryDTO";
 import { GarageSearchResultDTO } from "../../dto/booking/GarageResultDTO";
 import { IBooking } from "../../interface/Booking/IBookking";
 import { BookingDetailDTO } from "../../dto/booking/BookingDetailsDTO";
+import { BookingServiceCenterDetailDTO } from "../../dto/booking/BookingServiceCenterDetailDTO";
 
 export class BookingMapper {
   static toSearchResultDTO(r: any): GarageSearchResultDTO {
@@ -64,6 +65,31 @@ export class BookingMapper {
     schedule: raw.schedule,
     additionalInfo: raw.additionalInfo ?? null,
     job: raw.job ?? null,
+    proof: raw.proof ?? null,
+  };
+}
+static toServiceCenterDetailDTO(raw: any): BookingServiceCenterDetailDTO {
+  return {
+    id: raw._id.toString(),
+    status: raw.status,
+    visitType: raw.visitType,
+    customerName: raw.customerName,
+    customerPhone: raw.customerPhone,
+    vehicleRegistrationNumber: raw.vehicleRegistrationNumber,
+    vehicleType: raw.vehicleType,
+    vehicleBrand: raw.vehicleBrand,
+    vehicleModel: raw.vehicleModel,
+    vehiclePhotoUrl: raw.vehiclePhotoUrl ?? null,
+    categoryName: raw.categoryName,
+    mechanicName: raw.mechanicName ?? null,
+    schedule: raw.schedule,
+    additionalInfo: raw.additionalInfo ?? null,
+    statusTimeline: raw.statusTimeline ?? [],
+    job: raw.job ?? null,
+    proof: raw.proof ?? null,
+    pickupLocation:raw.pickupLocation ?? null,
+    advancePayment: raw.advancePayment,
+
   };
 }
 }

@@ -133,6 +133,11 @@ export const MESSAGES = {
       SLOT_TAKEN:"Slot was taken before payment completed. You have not been charged for a confirmed booking.",
       BOOKING_CONFIRMED:"Booking confirmed ",
       ORDER_CREATE:"Order create successfully",
-      FETCHED:"Booking fetched successfully"
+      FETCHED:"Booking fetched successfully",
+      JOBDESCRIPTION_UPDATE:"Job subscription updated successfully",
+      INVALID_STATUS:"Invalid status",
+      STATUS_UPDATE:"Status updated successfullt",
+      PROOF_IMAGE_REQUIRED:"proof image required",
+      PROOF_UPLOADED:"Proof added successfully"
     }
 }
