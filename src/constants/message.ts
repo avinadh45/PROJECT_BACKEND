@@ -1,3 +1,5 @@
+
+
 export const MESSAGES = {
 
   COMMON: {
@@ -138,6 +140,8 @@ export const MESSAGES = {
       INVALID_STATUS:"Invalid status",
       STATUS_UPDATE:"Status updated successfullt",
       PROOF_IMAGE_REQUIRED:"proof image required",
-      PROOF_UPLOADED:"Proof added successfully"
+      PROOF_UPLOADED:"Proof added successfully",
+      CANNOT_CANCEL:"Booking cannot cancel",
+      CANCELLED:"Booking cancelled successfully"
     }
 }

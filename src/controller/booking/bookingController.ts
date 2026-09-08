@@ -127,4 +127,36 @@ getServiceCenterBookingDetails = asyncHandler(async(req:Request,res:Response)=>{
   const result = await this._bookingService.getServiceCenterBookingDetails(bookingId as string,serviceCenterId)
   sendSuccess(res,result,MESSAGES.BOOKING.FETCHED,HttpStatus.OK)
 })
+
+getUserBooking = asyncHandler(async(req:Request,res:Response)=>{
+
+  const userId = (req as any).user.id;
+  
+  const page = Number(req.query.page) || 1 
+  const limit = Number(req.query.limit) || 5 
+  const status = req.query.status as string | undefined 
+  const search = req.query.search as string | undefined
+  const result = await this._bookingService.getUserBooking(userId,page,limit,status,search) 
+  sendSuccess(res,result,MESSAGES.BOOKING.FETCHED,HttpStatus.OK)
+})
+
+getUserBookingDetails = asyncHandler(async(req:Request,res:Response)=>{
+
+  
+  const userId  = (req as any).user.id;
+  const { bookingId } = req.params 
+ // console.log(userId,bookingId,"got them in the controller");
+  
+  const result = await this._bookingService.getUserBookingDetail(userId,bookingId as string)
+  sendSuccess(res,result,MESSAGES.BOOKING.FETCHED,HttpStatus.OK)
+})
+
+cancelBooking = asyncHandler(async(req:Request,res:Response)=>{
+
+   const userId  = (req as any).user.id;
+  const { bookingId } = req.params 
+
+  const result = await this._bookingService.cancelBooking(userId,bookingId as string)
+  sendSuccess(res,result,MESSAGES.BOOKING.CANCELLED,HttpStatus.OK)
+})
 }

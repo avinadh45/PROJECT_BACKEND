@@ -39,7 +39,7 @@ export class BookingRepository
       return Booking.create(data)
   }
 
-  async findById(bookingId: string): Promise<IBooking | null> {
+  async findById(bookingId: string): Promise<IBooking  & { save: () => Promise<any> } | null> {
     
     return await Booking.findById(bookingId)
   }
@@ -212,6 +212,8 @@ export class BookingRepository
         schedule: 1,
         additionalInfo: 1,
         job: 1,
+        proof:1,
+        pickupLocation:1,
         customerName: "$customer.name",
         customerPhone: "$customer.phoneNumber",
         vehicleRegistrationNumber: "$vehicle.RegistrationNumber",
@@ -223,7 +225,7 @@ export class BookingRepository
       },
     },
   ]);
-   console.log("aggregate result:", result)
+   //console.log("aggregate result:", result)
   return result[0] ?? null;
   }
  async updateJobItems(bookingId: string, mechanicId: string, items: IJobDescriptionItem[]): Promise<IBooking | null> {
@@ -256,6 +258,7 @@ export class BookingRepository
       {$lookup:{from:"users",localField:"userId",foreignField:"_id",as:"customer"}},{ $unwind:"$customer"},
       {$lookup:{from:"vehicles",localField:"vehicleId",foreignField:"_id",as:"vehicle"}},{ $unwind:"$vehicle"},
       {$lookup:{from:"categories",localField:"categoryId",foreignField:"_id",as:"category"}},{ $unwind:"$category"},
+      { $lookup: { from: "users", localField: "mechanicId", foreignField: "_id", as: "mechanic" } },
       {$project:{
         status:1,
         visitType:1,
@@ -263,12 +266,12 @@ export class BookingRepository
         additionalInfo:1,
         job:1,
         proof:1,
-        statusTimeLine:1,
+        statusTimeline: 1,
         advancePayment:1,
         pickupLocation:1,
         customerName:"$customer.name",
         customerPhone:"$customer.phoneNumber",
-        vehicleRegistractionNumber:"$vehicle.RegistractionNumber",
+        vehicleRegistrationNumber: "$vehicle.RegistrationNumber",
         vehicleType:"$vehicle.vehicleType",
         vehicleBrand:"$vehicle.brand",
         vehicleModel:"$vehicle.model",
@@ -279,4 +282,87 @@ export class BookingRepository
     ])
     return result[0] ?? null
   }
+  async findByUser(userId: string, page: number, limit: number, status?: string, search?: string): Promise<PaginatedResponse<any>> {
+    
+    const skip = ( page -1)*limit 
+    const match : Record<string,any> = { userId: new Types.ObjectId(userId)}
+    if(status){
+        match.status == status 
+    }
+    const pipeline : any[]=[{$match:match},{$sort:{createdAt:-1}},
+      {$lookup:{from:"vehicles",localField:"vehicleId",foreignField:"_id",as:"vehicle"}},
+      {$unwind:"$vehicle"},
+      {$lookup:{from:"categories",localField:"categoryId",foreignField:"_id",as:"category"}},
+      {$unwind:"$category"},
+      {$lookup:{from:"servicecenters",localField:"serviceCenterId",foreignField: "_id",as:"serviceCenter"}},
+      {$unwind:"$serviceCenter"},
+      ...(search?[{$match:{$or:[{"vehicle.RegistrationNumber":{ $regex:search, $options: "i"}},
+        {"category.name":{$regex:search,$options:"i"}},
+        {"serviceCenter.providerProfile.garageName":{$regex:search,$options:"i"}}
+      ]}}]:[]),{
+        $facet:{
+          data:[{$skip:skip},{$limit:limit},{
+            $project:{
+              _id:1,
+              vehicleRegistrationNumber: "$vehicle.RegistrationNumber",
+              vehiclePhotoUrl:"$vehicle.documents.vehicleImage",
+              categoryName: "$category.name",
+              garageName: "$serviceCenter.providerProfile.garageName",
+              visitType: 1,
+              schedule: 1,
+              status: 1,
+              advancePayment: 1,
+            }
+          }],
+          totalCount:[{$count:"count"}]
+        }
+      }
+    ];
+    //console.log(pipeline,"pipline")
+    const result = await Booking.aggregate(pipeline)
+    
+    const data = result[0]?.data ?? [];
+    const total = result[0]?.totalCount?.[0]?.count??0
+
+    return { data,total,page,limit,totalPages:Math.max(1,Math.ceil(total/limit))}
+  }
+
+async  findUserBookingDetails(bookingId: string, userId: string): Promise<any | null> {
+    
+    const result = await Booking.aggregate([
+    { $match: { _id: new Types.ObjectId(bookingId), userId: new Types.ObjectId(userId) } },
+    { $lookup: { from: "vehicles", localField: "vehicleId", foreignField: "_id", as: "vehicle" } },
+    { $unwind: "$vehicle" },
+    { $lookup: { from: "categories", localField: "categoryId", foreignField: "_id", as: "category" } },
+    { $unwind: "$category" },
+    { $lookup: { from: "servicecenters", localField: "serviceCenterId", foreignField: "_id", as: "serviceCenter" } },
+    { $unwind: "$serviceCenter" },
+    { $lookup: { from: "users", localField: "mechanicId", foreignField: "_id", as: "mechanic" } },
+    {
+      $project: {
+        status: 1,
+        visitType: 1,
+        schedule: 1,
+        additionalInfo: 1,
+        job: 1,
+        proof: 1,
+        statusTimeline: 1,
+        advancePayment: 1,
+        pickupLocation: 1,
+        vehicleRegistrationNumber: "$vehicle.RegistrationNumber",
+        vehicleType: "$vehicle.vehicleType",
+        vehicleBrand: "$vehicle.brand",
+        vehicleModel: "$vehicle.model",
+        vehiclePhotoUrl: "$vehicle.documents.vehicleImage",
+        categoryName: "$category.name",
+        garageName: "$serviceCenter.providerProfile.garageName",
+        garagePhone: "$serviceCenter.providerProfile.phone",
+        garageEmail: "$serviceCenter.email",
+        garageAddress: "$serviceCenter.providerProfile.formattedAddress",
+        mechanicName: { $first: "$mechanic.name" },
+      },
+    },
+  ]);
+  return result[0] ?? null;
+}
 }

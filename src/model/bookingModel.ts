@@ -36,6 +36,7 @@ const BookingSchema = new Schema<IBooking>({
  visitType: { type: String, enum: ["drive-in", "pickup-drop"], required: true },
 
   pickupLocation: { type: PickupLocationSchema, required: false },
+  additionalInfo: { type: String, required: false },   
 
   schedule: {
     date: { type: String, required: true },

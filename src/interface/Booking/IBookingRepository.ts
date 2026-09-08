@@ -6,11 +6,13 @@ export interface IBookkingReadRepository{
 
     findByRazorpayOrderId(orderId:string):Promise<(IBooking & { save:()=> Promise<any>}) | null>
     getAdvanceFeeForService(serviceCenterId:string,categoryId:string):Promise<number | null>
-    findById(bookingId:string):Promise<IBooking | null>
+    findById(bookingId:string):Promise<IBooking & { save: () => Promise<any> } | null>
     findByServiceCenter(serviceCenterId:string,page:number,limit:number,status?:string,search?:string):Promise<PaginatedResponse<any>>
     findByMechanic(mechanicId:string,page:number,limit:number,status?:string,search?:string):Promise<PaginatedResponse<any>>
     findMechanicBookingDetails(bookingId:string,mechanicId:string):Promise<any | null>
     findServiceCenterBookingDetails(bookingId:string,serviceCenterId:string):Promise<any | null>
+    findByUser(userId:string,page:number,limit:number,status?:string,search?:string):Promise<PaginatedResponse<any>>
+    findUserBookingDetails(bookingId:string,userId:string):Promise<any | null>
 }
 
 export interface IBookingWriteRepository{

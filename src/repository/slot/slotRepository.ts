@@ -66,4 +66,9 @@ async unblockFullDay(serviceCenterId: string, date: string): Promise<void> {
   
   await this.model.updateOne({serviceCenterId,date,time},{$inc:{bookedCount:1}})
 }
+
+async decrementBookedCount(serviceCenterId: string, date: string, time: string): Promise<void> {
+  
+  await this.model.updateOne({serviceCenterId,date,time,bookedCount:{$gt:0}},{$inc:{bookedCount:-1}})
+}
 }

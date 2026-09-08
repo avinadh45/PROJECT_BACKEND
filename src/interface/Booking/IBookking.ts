@@ -103,7 +103,7 @@ export interface IBooking{
     visitType: "drive-in" | "pickup-drop";
 
     pickupLocation?: IPickupLocation;
-
+    additionalInfo?: string;
     schedule:ISchedule;
     status:string;
     statusTimeline:IStatusTimeline[];

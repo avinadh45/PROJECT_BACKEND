@@ -22,6 +22,11 @@ export interface BookingDetailDTO {
     estimatedCost: number;
     description: any[];
   } | null;
+  pickupLocation: {
+  type: "Point";
+  coordinates: number[];
+  formatedAddress: string;
+} | null;
   proof: {
   imageUrl: string;
   uploadedBy: string;

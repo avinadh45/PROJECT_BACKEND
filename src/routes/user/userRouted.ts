@@ -9,12 +9,24 @@ import { registerSchema } from "../../validation/userValidation";
 import { checkBlocked } from "../../middleware/checkBlock";
 import { authMiddleware } from "../../middleware/authMiddleware";
 import User from "../../model/Usermodel";
-
+import { BookingService } from "../../service/booking/bookingService";
+import { ServiceCenterRepository } from "../../repository/ServiceCenter/serviceCenterRepository";
+import { BookingRepository } from "../../repository/booking/BookingRepository";
+import { SlotRepository } from "../../repository/slot/slotRepository";
+import { MechanicReadRepository } from "../../repository/mechanic/mechanicReadRepository";
+import { BookingController } from "../../controller/booking/bookingController";
 const router = Router()
 
 const userRepository = new UserRepository(User);
 const otpRepository = new RedisOtpRepository();
 const mailService = new NodeMailerService();
+const serviceCenterRepo = new ServiceCenterRepository()
+const bookingRepo = new BookingRepository()
+const slotRepo = new SlotRepository()
+const mechanicRepo = new MechanicReadRepository()
+const bookingService = new BookingService(serviceCenterRepo,bookingRepo,slotRepo,mechanicRepo)
+const bookingController = new BookingController(bookingService)
+
 
 const userService = new UserService(
     userRepository, 
@@ -33,5 +45,8 @@ router.get("/dashboard",authMiddleware,userController.getdashboard)
 router.post("/reset-password",userController.resetPassword.bind(userController))
 router.post("/google-login",userController.googleLogin.bind(userController))
 router.post("/logout",userController.logout.bind(userController))
+router.get("/my-bookings",authMiddleware,bookingController.getUserBooking)
+router.get("/details/:bookingId",authMiddleware,bookingController.getUserBookingDetails)
+router.patch("/:bookingId/cancel",authMiddleware,bookingController.cancelBooking)
 
 export default router

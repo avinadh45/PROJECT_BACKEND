@@ -4,6 +4,8 @@ import { BookingServiceCenterDetailDTO } from "../../dto/booking/BookingServiceC
 import { BookingSummaryDTO } from "../../dto/booking/BookingSummaryDTO";
 import { GarageFilterDTO } from "../../dto/booking/GarageFilterDTO";
 import { GarageSearchResultDTO } from "../../dto/booking/GarageResultDTO";
+import { UserBookingDetailDTO } from "../../dto/booking/UserBookingDetailsDTO";
+import { UserBookingSummaryDTO } from "../../dto/booking/UserBookingSummaryDTO";
 import { PaginatedResponse } from "../common/pagination";
 import { IJobDescriptionItem } from "./IBookking";
 
@@ -19,4 +21,7 @@ export interface IBookingService {
     updateStatus(bookingId:string,mechanicId:string,status:string):Promise<BookingDetailDTO>
     uploadProof(bookingId:string,mechanicId:string,imageUrl:string):Promise<BookingDetailDTO>
     getServiceCenterBookingDetails(bookingId:string,serviceCenterId:string):Promise<BookingServiceCenterDetailDTO>
+    getUserBooking(userId:string,page:number,limit:number,status?:string,search?:string):Promise<PaginatedResponse<UserBookingSummaryDTO>>
+    getUserBookingDetail(userId:string,bookingId:string):Promise<UserBookingDetailDTO>
+    cancelBooking(userId:string,bookingId:string):Promise<BookingConfirmationDTO>
 }
