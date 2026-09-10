@@ -85,11 +85,14 @@ export interface IInvoice{
 export interface IPaymentRecord{
 
     amount:number;
-    status: "pending" | "paid" | "failed";
+    status: "pending" | "paid" | "failed" | "refund_due" | "refunded";
     method?:string;
     paidAt:Date;
      razorpayOrderId?: string;
     razorpayPaymentId?: string;
+    refundedAt?:Date
+    refundedBy?: string
+    refundId?: string;
 }
 
 export interface IBooking{

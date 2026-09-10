@@ -142,6 +142,13 @@ export const MESSAGES = {
       PROOF_IMAGE_REQUIRED:"proof image required",
       PROOF_UPLOADED:"Proof added successfully",
       CANNOT_CANCEL:"Booking cannot cancel",
-      CANCELLED:"Booking cancelled successfully"
+      CANCELLED:"Booking cancelled successfully",
+      REFUND_NOT_DUE:"Refund not due because not founded",
+      MARKED_REFUNDED:"Refund marked",
+      NO_PAYMENT_ID:"No payment id",
+      CANNOT_RESCHEDULE:"Cannot reschedule at this stage",
+      RESCHEDULE_CUTOFF:"Cannot change the schedule at this time",
+      SAME_SLOT:"Same slot",
+      RESCHEDULED:"Rescheduled successfully"
     }
 }

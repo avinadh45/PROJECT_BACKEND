@@ -45,7 +45,7 @@ export class BookingRepository
   }
   async findByServiceCenter(serviceCenterId: string, page: number, limit: number, status?: string, search?: string): Promise<PaginatedResponse<any>> {
     
-    console.log("findByServiceCenter called with:", { serviceCenterId, page, limit, status, search });
+   // console.log("findByServiceCenter called with:", { serviceCenterId, page, limit, status, search });
 
     const skip = ( page - 1)*limit 
     const matchStage: Record<string,any>={serviceCenterId: new Types.ObjectId(serviceCenterId)}
@@ -54,7 +54,7 @@ export class BookingRepository
       matchStage.status = status
     }
 
-    console.log("matchStage:", matchStage);
+  //  console.log("matchStage:", matchStage);
 
     const pipeline: any[]=[
       {$match: matchStage},
@@ -94,8 +94,7 @@ export class BookingRepository
       }}
     ];
     const result = await Booking.aggregate(pipeline);
-    console.log("full pipeline:", JSON.stringify(pipeline, null, 2));
-     console.log("aggregate raw result:", JSON.stringify(result, null, 2));
+ 
     const data = result[0]?.data??[];
     const total = result[0]?.totalCount?.[0]?.count ?? 0;
     return { data,total,page,limit,totalPages:Math.max(1,Math.ceil(total/limit))}
@@ -169,8 +168,7 @@ export class BookingRepository
     }
   }
   async findMechanicBookingDetails(bookingId: string, mechanicId: string): Promise<any | null> {
-      console.log("repo received bookingId:", bookingId, typeof bookingId)
-  console.log("repo received mechanicId:", mechanicId, typeof mechanicId)
+    
     const result = await Booking.aggregate([
     {
       $match: {
@@ -364,5 +362,16 @@ async  findUserBookingDetails(bookingId: string, userId: string): Promise<any | 
     },
   ]);
   return result[0] ?? null;
+}
+
+async markRefuns(bookingId: string, serviceCenterId: string, markedBy: string): Promise<IBooking | null> {
+  
+  return Booking.findOneAndUpdate({_id:bookingId,serviceCenterId:new Types.ObjectId(serviceCenterId),"advancePayment.status":"refund_due"},
+  { $set:{"advancePayment.status":"refunded",
+    "advancePayment.refundedAt":new Date(),
+    "advancePayment.refundedBy":markedBy
+  }},
+  {new:true}
+)
 }
 }

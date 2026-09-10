@@ -14,13 +14,16 @@ const PaymentRecordSchema = new Schema({
   amount: { type: Number, required: true },
   status: {
     type: String,
-    enum: ["pending", "paid", "failed"],
+    enum: ["pending", "paid", "failed","refund_due", "refunded"],
     default: "pending",
   },
   method: { type: String },
   paidAt: { type: Date },
   razorpayOrderId: { type: String },
   razorpayPaymentId: { type: String },
+  refundedAt:{type:Date},
+  refundedBy:{ type:String},
+  refundId: { type: String },
 });
 
 const BookingSchema = new Schema<IBooking>({

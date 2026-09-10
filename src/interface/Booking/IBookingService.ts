@@ -4,6 +4,7 @@ import { BookingServiceCenterDetailDTO } from "../../dto/booking/BookingServiceC
 import { BookingSummaryDTO } from "../../dto/booking/BookingSummaryDTO";
 import { GarageFilterDTO } from "../../dto/booking/GarageFilterDTO";
 import { GarageSearchResultDTO } from "../../dto/booking/GarageResultDTO";
+import { RescheduleBookingDTO } from "../../dto/booking/RescheduleBookingDTO";
 import { UserBookingDetailDTO } from "../../dto/booking/UserBookingDetailsDTO";
 import { UserBookingSummaryDTO } from "../../dto/booking/UserBookingSummaryDTO";
 import { PaginatedResponse } from "../common/pagination";
@@ -24,4 +25,6 @@ export interface IBookingService {
     getUserBooking(userId:string,page:number,limit:number,status?:string,search?:string):Promise<PaginatedResponse<UserBookingSummaryDTO>>
     getUserBookingDetail(userId:string,bookingId:string):Promise<UserBookingDetailDTO>
     cancelBooking(userId:string,bookingId:string):Promise<BookingConfirmationDTO>
+    markBookingRefund(servicCenterId:string,bookingId:string):Promise<BookingServiceCenterDetailDTO>
+    rescheduleBooking(userId:string,bookingId:string,dto:RescheduleBookingDTO):Promise<BookingConfirmationDTO>
 }

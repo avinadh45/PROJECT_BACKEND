@@ -55,6 +55,7 @@ router.get("/profile",controller.getProfile)
 router.patch("/availability",validate(updateAvailabilitySchema),controller.updateAvailability)
 router.get("/bookings",bookingController.getServiceCenterBookings)
 router.get("/bookings/:bookingId",bookingController.getServiceCenterBookingDetails)
-
+router.patch("/bookings/:bookingId/mark-refunded",bookingController.markRefund)
 
 export default router
+    

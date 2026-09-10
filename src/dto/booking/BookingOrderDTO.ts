@@ -36,7 +36,7 @@ export interface BookingConfirmationDTO {
   };
   advancePayment:{
     amount:number;
-    status:"pending" | "paid" | "failed";
+    status:"pending" | "paid" | "failed"| "refund_due" | "refunded";
     paidAt?:Date
   }
 }

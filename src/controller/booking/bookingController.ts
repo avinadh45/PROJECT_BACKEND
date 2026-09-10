@@ -159,4 +159,20 @@ cancelBooking = asyncHandler(async(req:Request,res:Response)=>{
   const result = await this._bookingService.cancelBooking(userId,bookingId as string)
   sendSuccess(res,result,MESSAGES.BOOKING.CANCELLED,HttpStatus.OK)
 })
+
+markRefund = asyncHandler(async(req:Request,res:Response)=>{
+
+  const servicCenterId = (req as any).serviceCenter.id
+  const { bookingId } = req.params
+  const result = await this._bookingService.markBookingRefund(servicCenterId,bookingId as string)
+  sendSuccess(res,result,MESSAGES.BOOKING.MARKED_REFUNDED,HttpStatus.OK)
+})
+
+rescheduleBooking = asyncHandler(async(req:Request,res:Response)=>{ 
+
+  const userId = (req as any).user.id; 
+   const { bookingId } = req.params
+  const result = await this._bookingService.rescheduleBooking(userId,bookingId as string,req.body)
+  sendSuccess(res,result,MESSAGES.BOOKING.RESCHEDULED,HttpStatus.OK)
+})
 }

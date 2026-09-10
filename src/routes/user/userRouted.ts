@@ -47,6 +47,7 @@ router.post("/google-login",userController.googleLogin.bind(userController))
 router.post("/logout",userController.logout.bind(userController))
 router.get("/my-bookings",authMiddleware,bookingController.getUserBooking)
 router.get("/details/:bookingId",authMiddleware,bookingController.getUserBookingDetails)
-router.patch("/:bookingId/cancel",authMiddleware,bookingController.cancelBooking)
+router.patch("/booking/:bookingId/cancel",authMiddleware,bookingController.cancelBooking)
+router.patch("/:bookingId/reschedule",authMiddleware,bookingController.rescheduleBooking)
 
 export default router

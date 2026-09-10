@@ -21,5 +21,6 @@ export interface IBookingWriteRepository{
     updateJobItems(bookingId:string,mechanicId:string,items:IJobDescriptionItem[]):Promise<IBooking | null>
     updateStatus(bookingId:string,mechanicId:string,status:string,updateBy:string):Promise<IBooking | null >
     uploadProof(bookingId:string,mechanicId:string,imageUrl:string):Promise< IBooking | null>
+    markRefuns(bookingId:string,serviceCenterId:string,markedBy:string):Promise<IBooking | null >
 }
 

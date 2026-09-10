@@ -26,5 +26,5 @@ export interface BookingServiceCenterDetailDTO {
     coordinates:[];
     formattedAddress:string;
   }|null
-  advancePayment: { amount: number; status: string; paidAt?: Date };
+  advancePayment: { amount: number;  status: "pending" | "paid" | "failed" | "refund_due" | "refunded" ; paidAt?: Date; refundedAt?:Date };
 }

@@ -68,7 +68,16 @@ async unblockFullDay(serviceCenterId: string, date: string): Promise<void> {
 }
 
 async decrementBookedCount(serviceCenterId: string, date: string, time: string): Promise<void> {
-  
-  await this.model.updateOne({serviceCenterId,date,time,bookedCount:{$gt:0}},{$inc:{bookedCount:-1}})
+  const slot = await this.model.findOneAndUpdate(
+    { serviceCenterId, date, time, bookedCount: { $gt: 0 } },
+    { $inc: { bookedCount: -1 } },
+    { returnDocument:"after" }
+  );
+
+  if (slot && slot.status === "full" && slot.bookedCount < slot.MaxBooking) {
+    slot.status = "available";
+    await slot.save();
+  }
 }
+
 }
