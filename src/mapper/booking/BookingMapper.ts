@@ -118,6 +118,7 @@ export class BookingMapper {
       vehicleModel: data.vehicleModel,
       vehiclePhotoUrl: data.vehiclePhotoUrl ?? null,
       categoryName: data.categoryName,
+      serviceCenterId:data.serviceCenterId.toString(),
       garageName: data.garageName,
       garagePhone: data.garagePhone,
       garageEmail: data.garageEmail,

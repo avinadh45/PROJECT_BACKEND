@@ -8,6 +8,7 @@ export interface UserBookingDetailDTO {
   vehicleModel: string;
   vehiclePhotoUrl: string | null;
   categoryName: string;
+  serviceCenterId: string;
   garageName: string;
   garagePhone: string;
   garageEmail: string;

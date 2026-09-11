@@ -469,7 +469,7 @@ export class BookingService implements IBookingService {
         booking.status = "confirmed"
       }
      }
-     booking.schedule = {date:dto.date,slotStartingTime:dto.slotStartingTime,slotEndingTime:dto.slotStartingTime}
+     booking.schedule = {date:dto.date,slotStartingTime:dto.slotStartingTime,slotEndingTime:dto.slotEndingTime}
 
      booking.statusTimeline.push({status:"reschedule",updatedBy:userId,at:new Date()})
      await booking.save()

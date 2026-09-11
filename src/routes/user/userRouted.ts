@@ -48,6 +48,6 @@ router.post("/logout",userController.logout.bind(userController))
 router.get("/my-bookings",authMiddleware,bookingController.getUserBooking)
 router.get("/details/:bookingId",authMiddleware,bookingController.getUserBookingDetails)
 router.patch("/booking/:bookingId/cancel",authMiddleware,bookingController.cancelBooking)
-router.patch("/:bookingId/reschedule",authMiddleware,bookingController.rescheduleBooking)
+router.patch("/booking/:bookingId/reschedule",authMiddleware,bookingController.rescheduleBooking)
 
 export default router

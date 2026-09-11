@@ -353,6 +353,7 @@ async  findUserBookingDetails(bookingId: string, userId: string): Promise<any | 
         vehicleModel: "$vehicle.model",
         vehiclePhotoUrl: "$vehicle.documents.vehicleImage",
         categoryName: "$category.name",
+        serviceCenterId: 1,
         garageName: "$serviceCenter.providerProfile.garageName",
         garagePhone: "$serviceCenter.providerProfile.phone",
         garageEmail: "$serviceCenter.email",
