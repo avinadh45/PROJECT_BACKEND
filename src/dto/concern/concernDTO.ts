@@ -27,3 +27,16 @@ export interface ConcernDetailDTO {
   timeline: { status: string; updatedBy: string; at: Date }[];
   createdAt: Date;
 }
+export interface ConcernListSummaryDTO {
+  id: string;
+  issueTitle: string;
+  status: string;
+  customerName: string;
+  vehicleRegistrationNumber: string;
+  createdAt: Date;
+}
+
+export interface RespondToConcernDTO {
+  rejected: boolean;
+  rejectReason?: string;
+}

@@ -9,7 +9,8 @@ export const MESSAGES = {
     ACCOUNT_BLOCKED:"Your account is blocked ",
     VALIDATION_FAILED:"Validation failed",
     PAYMENT_FAILED:"Payment verification failed",
-    ORDER_CREATE:"Order created"
+    ORDER_CREATE:"Order created",
+    FETCHED:"Data fetched successfully"
   },
 
   USER: {
@@ -150,5 +151,13 @@ export const MESSAGES = {
       RESCHEDULE_CUTOFF:"Cannot change the schedule at this time",
       SAME_SLOT:"Same slot",
       RESCHEDULED:"Rescheduled successfully"
+    },
+    CONCERN:{
+      BOOKING_NOT_COMPLETED:"Booking not completed ",
+      WINDOW_EXPIRED:"Concern window expired",
+      CONCERN_EXIST:"Concern alreay existing",
+      CONCERN_CREATED:"Concern created successfully",
+      REJECT_REASON_REQUIRED:"Rejected reson required",
+      
     }
 }

@@ -24,12 +24,13 @@ const ConcernSchema = new Schema<IConcern>({
         responseAt:{type:Date}
     },
     resolutionBookingId: {type: Schema.Types.ObjectId,ref:"Booking"},
-    timeline:[{
-        status:{type:String,required:true},
-        updateBy:{ type:String, required:true},
-        at: {type:Date, default:Date.now},
-        _id:false
-    },
+    timeline: [
+  {
+    status: { type: String, required: true },
+    updatedBy: { type: String, required: true },
+    at: { type: Date, default: Date.now },
+    _id: false,
+  },
 ],
 },
 {timestamps: true}
