@@ -30,6 +30,7 @@ import { BookingServiceCenterDetailDTO } from "../../dto/booking/BookingServiceC
 import { UserBookingSummaryDTO } from "../../dto/booking/UserBookingSummaryDTO";
 import { UserBookingDetailDTO } from "../../dto/booking/UserBookingDetailsDTO";
 import { RescheduleBookingDTO } from "../../dto/booking/RescheduleBookingDTO";
+import { IConcernReadRepository } from "../../interface/concern/IConcernRepository";
 
 export class BookingService implements IBookingService {
   constructor(
@@ -37,6 +38,7 @@ export class BookingService implements IBookingService {
     private _bookingRepo: IBookingWriteRepository & IBookkingReadRepository,
     private _slotRapo: ISlotReadRepository & ISlotWriteRepository,
     private _mechanicRepo: IMechanicReadRepository,
+    private _concernRepo:IConcernReadRepository
   ) {}
 
   async findAvailableGarages(
@@ -181,10 +183,8 @@ export class BookingService implements IBookingService {
     return BookingMapper.toConfirmationDTO(booking);
   }
 
-  async getBooking(
-    userId: string,
-    bookingId: string,
-  ): Promise<BookingConfirmationDTO> {
+  async getBooking(userId: string,bookingId: string,): Promise<BookingConfirmationDTO> {
+    
     const booking = await this._bookingRepo.findById(bookingId);
     if (!booking || booking.userId.toString() !== userId) {
       throw new AppError(MESSAGES.BOOKING.NOT_FOUND, HttpStatus.NOT_FOUND);
@@ -315,13 +315,7 @@ export class BookingService implements IBookingService {
     }
     return BookingMapper.toServiceCenterDetailDTO(data);
   }
-  async getUserBooking(
-    userId: string,
-    page: number,
-    limit: number,
-    status?: string,
-    search?: string,
-  ): Promise<PaginatedResponse<UserBookingSummaryDTO>> {
+  async getUserBooking(userId: string,page: number,limit: number, status?: string, search?: string,): Promise<PaginatedResponse<UserBookingSummaryDTO>> {
     const result = await this._bookingRepo.findByUser(
       userId,
       page,
@@ -329,7 +323,11 @@ export class BookingService implements IBookingService {
       status,
       search,
     );
-    return { ...result, data: result.data.map(BookingMapper.toUserSummaryDTO) };
+    const bookingIds = result.data.map((a:any)=> a._id.toString())
+    const activeConcerns  =  await this._concernRepo.findActiveConcernByBookingIds(bookingIds)
+    const concernMap = new Map(activeConcerns.map((a)=>[a.bookingId,a.concernId]))
+    const enrichedData = result.data.map((a:any)=> ({...a,activeConcernId:concernMap.get(a._id.toString()) ?? null}))
+    return { ...result, data: enrichedData.map(BookingMapper.toUserSummaryDTO) };
   }
   async getUserBookingDetail(userId: string, bookingId: string): Promise<UserBookingDetailDTO> {
       

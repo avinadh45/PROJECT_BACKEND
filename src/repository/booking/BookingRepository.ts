@@ -7,6 +7,7 @@ import {
   IBookkingReadRepository,
 } from "../../interface/Booking/IBookingRepository";
 import { PaginatedResponse } from "../../interface/common/pagination";
+import { IConcernReadRepository } from "../../interface/concern/IConcernRepository";
 
 export class BookingRepository
   implements IBookingWriteRepository, IBookkingReadRepository
@@ -280,10 +281,10 @@ export class BookingRepository
     ])
     return result[0] ?? null
   }
-  async findByUser(userId: string, page: number, limit: number, status?: string, search?: string): Promise<PaginatedResponse<any>> {
+  async findByUser(userId: string, page: number, limit: number, status?: string, search?: string,concernRepo?:IConcernReadRepository): Promise<PaginatedResponse<any>> {
     
     const skip = ( page -1)*limit 
-    const match : Record<string,any> = { userId: new Types.ObjectId(userId)}
+    const match : Record<string,any> = { userId: new Types.ObjectId(userId),originalBookingId:{$exists:false}}
     if(status){
         match.status == status 
     }
@@ -294,6 +295,8 @@ export class BookingRepository
       {$unwind:"$category"},
       {$lookup:{from:"servicecenters",localField:"serviceCenterId",foreignField: "_id",as:"serviceCenter"}},
       {$unwind:"$serviceCenter"},
+      {$lookup:{from:"bookings",localField: "_id",foreignField: "originalBookingId",as: "followUpVisits"}},
+      {$lookup:{from:"concerns",localField:"_id",foreignField:"bookingId",as:"concern"}},
       ...(search?[{$match:{$or:[{"vehicle.RegistrationNumber":{ $regex:search, $options: "i"}},
         {"category.name":{$regex:search,$options:"i"}},
         {"serviceCenter.providerProfile.garageName":{$regex:search,$options:"i"}}
@@ -310,18 +313,38 @@ export class BookingRepository
               schedule: 1,
               status: 1,
               advancePayment: 1,
+              concern: { $arrayElemAt: ["$concern", 0] },
+              followUpVisits:{
+                $map:{
+                  input:"$followUpVisits",
+                  as:"fv",
+                  in:{
+                    id: "$$fv._id",
+                    status: "$$fv.status",
+                    schedule: "$$fv.schedule",
+                  }
+                }
+              }
             }
           }],
           totalCount:[{$count:"count"}]
         }
       }
     ];
-    //console.log(pipeline,"pipline")
+   
     const result = await Booking.aggregate(pipeline)
-    
     const data = result[0]?.data ?? [];
     const total = result[0]?.totalCount?.[0]?.count??0
 
+    // const bookingId = data.map((booking:any)=> booking._id.toString())
+
+    // const activeConcerns = concernRepo ? await concernRepo.findActiveConcernByBookingIds(bookingId):[]
+    // const concernMap = new Map(activeConcerns.map((c)=>[c.bookingId,c.concernId]))
+    //   const enrichedData = data.map((booking: any) => ({
+    //     ...booking,
+    //     activeConcernId:
+    //         concernMap.get(booking._id.toString()) ?? null
+    // }));
     return { data,total,page,limit,totalPages:Math.max(1,Math.ceil(total/limit))}
   }
 

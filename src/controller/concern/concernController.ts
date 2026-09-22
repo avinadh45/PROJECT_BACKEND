@@ -43,6 +43,8 @@ export class ConcernController {
 
     const serviceCenterId = (req as any).serviceCenter.id 
     const { concernId } = req.params 
+    console.log(serviceCenterId,concernId,"both in the controller");
+    
     const result = await this._concernService.getConcernDetails(serviceCenterId,concernId as string) 
     sendSuccess(res,result,MESSAGES.COMMON.FETCHED,HttpStatus.OK)
   })
@@ -53,5 +55,21 @@ export class ConcernController {
      const { concernId } = req.params 
     const result = await this._concernService.responceClient(serviceCenterId,concernId as string,req.body) 
     sendSuccess(res,result,MESSAGES.COMMON.FETCHED,HttpStatus.OK)
+  })
+
+  scheduleConcernVisit = asyncHandler(async(req:Request,res:Response)=>{
+
+    const userId = (req as any).user.id;
+    const { concernId } = req.params 
+    const result = await this._concernService.scheduleConcernVisit(userId,concernId as string,req.body)
+    sendSuccess(res,result,MESSAGES.CONCERN.SCHEDULE,HttpStatus.OK)
+  })
+
+  getUserConernDetails = asyncHandler(async(req:Request,res:Response)=>{
+
+    const userId = (req as any).user.id;
+    const { concernId } = req.params 
+    const result = await this._concernService.getUserConcernDetail(userId,concernId as string)
+    sendSuccess(res,result,MESSAGES.CONCERN.FETCHED,HttpStatus.OK)
   })
 }

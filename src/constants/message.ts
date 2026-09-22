@@ -158,6 +158,14 @@ export const MESSAGES = {
       CONCERN_EXIST:"Concern alreay existing",
       CONCERN_CREATED:"Concern created successfully",
       REJECT_REASON_REQUIRED:"Rejected reson required",
-      
+      NOT_APPROVED:"Concern not approved",
+      SCHEDULE:"Booking schedule",
+      FETCHED:"Concern fetched successfully"
+    },
+    CHAT:{
+      NOT_AVAILABLE:"Chat not available",
+      CHAT_FETCHED:"Chat fetched successfully",
+      CONVERSATION_READY:"Conversation ready",
+      MARKED_READ:"Chat marked as read"
     }
 }

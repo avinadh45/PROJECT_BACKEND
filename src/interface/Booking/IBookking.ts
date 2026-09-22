@@ -104,7 +104,8 @@ export interface IBooking{
     categoryId:Types.ObjectId;
      mechanicId?: Types.ObjectId;
     visitType: "drive-in" | "pickup-drop";
-
+    originalBookingId?: Types.ObjectId; 
+    concernId?: Types.ObjectId;
     pickupLocation?: IPickupLocation;
     additionalInfo?: string;
     schedule:ISchedule;

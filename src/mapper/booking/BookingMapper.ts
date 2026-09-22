@@ -105,6 +105,13 @@ export class BookingMapper {
       schedule: data.schedule,
       status: data.status,
       advancePaymentStatus: data.advancePayment.status,
+      activeConcernId:data.activeConcernId ?? null,
+      concernId: data.concern?._id?.toString() ?? null,
+      followUpVisits: (data.followUpVisits ?? []).map((fv: any) => ({
+      id: fv.id.toString(),
+      status: fv.status,
+      schedule: fv.schedule,
+    })),
     };
   }
   static toUserDetailDTO(data: any): UserBookingDetailDTO {
@@ -131,6 +138,7 @@ export class BookingMapper {
       proof: data.proof ?? null,
       pickupLocation: data.pickupLocation ?? null,
       advancePayment: data.advancePayment,
+     
     };
   }
 }

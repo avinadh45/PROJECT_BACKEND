@@ -26,5 +26,5 @@ export interface IBookingService {
     getUserBookingDetail(userId:string,bookingId:string):Promise<UserBookingDetailDTO>
     cancelBooking(userId:string,bookingId:string):Promise<BookingConfirmationDTO>
     markBookingRefund(servicCenterId:string,bookingId:string):Promise<BookingServiceCenterDetailDTO>
-    rescheduleBooking(userId:string,bookingId:string,dto:RescheduleBookingDTO):Promise<BookingConfirmationDTO>
+    rescheduleBooking(userId:string,bookingId:string,dto:RescheduleBookingDTO):Promise<BookingConfirmationDTO   >
 }

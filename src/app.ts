@@ -12,6 +12,7 @@ import subscriptionRouter from "./routes/subscription/subscriptionRoute"
 import slotRoutes from "./routes/slot/slotRoute"
 import bookingRoutes from "./routes/booking/bookingRoute"
 import concernRoutes from "./routes/concern/concernRouter"
+import chatRouter from "./routes/chat/chatRoute"
 import { errorMiddleware } from "./middleware/errorMiddleware";
 
 dotenv.config(); 
@@ -32,6 +33,7 @@ app.use("/subscription",subscriptionRouter)
 app.use('/slot',slotRoutes)
 app.use("/booking",bookingRoutes)
 app.use("/concern",concernRoutes)
+app.use("/chat",chatRouter)
 app.use(errorMiddleware)
 
 export default app  

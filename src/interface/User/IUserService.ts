@@ -9,6 +9,7 @@ import { GoogleLoginDTO } from "../../dto/user/googleDTO";
 import { userListDTO } from "../../dto/admin/userListDTO";
 import { userDetailsDTO } from "../../dto/admin/userDetail";
 import { PaginatedResponse } from "../common/pagination";
+import { UserProfileDTO } from "../../dto/user/UserProfileDTO";
 export interface IUserService{
     registerUser(userData:UserRegisterDTO): Promise<userResponseDTO>
     verifyOtp(dto:VerifyOtpDTO):Promise<boolean>
@@ -21,6 +22,6 @@ export interface IUserService{
     userList(page:number,limit:number,search:string):Promise<PaginatedResponse<userListDTO>>
     getUser(id:string):Promise<userDetailsDTO>
     block(id:string):Promise<userDetailsDTO>
-    
+    getMe(id:string):Promise<UserProfileDTO>
 
 }

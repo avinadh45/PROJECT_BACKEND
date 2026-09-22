@@ -133,4 +133,10 @@ resetPassword = asyncHandler(async(req: Request, res: Response)=> {
     res.clearCookie("refreshToken")
    return sendSuccess(res, null, MESSAGES.USER.LOGOUT_SUCCESS, HttpStatus.OK);
   }
+  getMe = asyncHandler(async(req:Request,res:Response)=>{
+
+    const userId = (req as any).user.id 
+    const result = await this._userService.getMe(userId)
+    sendSuccess(res,result,MESSAGES.USER.FETCH_SUCCESS,HttpStatus.OK)
+  })
 }

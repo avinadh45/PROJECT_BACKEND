@@ -3,6 +3,7 @@ import { UserRegisterDTO } from "../../dto/user/RegisterDTO";
 import { userResponseDTO } from "../../dto/user/ResponseDTO";
 import { userListDTO } from "../../dto/admin/userListDTO";
 import { userDetailsDTO } from "../../dto/admin/userDetail";
+import { UserProfileDTO } from "../../dto/user/UserProfileDTO";
 
 export class UserMapper {
   static toEntity(dto: UserRegisterDTO): Partial<IUser> {
@@ -50,6 +51,14 @@ export class UserMapper {
       phoneNumber: user.phoneNumber,
       isBlocked: user.isBlocked,
       createdAt: user.createdAt,
+    }
+  }
+  static toProfileDTO(user : IUser): UserProfileDTO{
+    return{
+      id:user._id.toString(),
+      email : user.email,
+      name: user.name,
+       role : user.role 
     }
   }
 }

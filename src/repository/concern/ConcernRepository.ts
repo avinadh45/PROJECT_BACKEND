@@ -107,7 +107,7 @@ async findConcernDetails(concernId: string, serviceCenterId: string): Promise<an
         {$unwind:"$customer"},
         {$lookup:{from:"bookings",localField:"bookingId",foreignField:"_id",as:"booking"}},
         {$unwind:"$booking"},
-        {$lookup:{from:"vehicles",localField:"bookings.vehicleId",foreignField:"_id",as:"vehicle"}},
+        {$lookup:{from:"vehicles",localField:"booking.vehicleId",foreignField:"_id",as:"vehicle"}},
         {$unwind:"$vehicle"},
         {$lookup:{from:"categories",localField:"booking.categoryId",foreignField:"_id",as:"category"}},
         {$unwind:"$category"},
@@ -130,5 +130,57 @@ async findConcernDetails(concernId: string, serviceCenterId: string): Promise<an
         }
     ])
     return result[0] ?? null
+}
+async markSchedule(concernId: string, resolutionBookingId: string, updatedBy: string): Promise<IConcern | null> {
+  
+  return Concern.findOneAndUpdate({id:concernId},{
+    $set:{status:"scheduled",resolutionBookingId:new Types.ObjectId(resolutionBookingId)},
+    $push:{timeline:{status:"schedule",updatedBy,at:new Date()}}
+  },{new:true})
+}
+
+async findUserConcernDetail(concenId: string, userId: string): Promise<any | null> {
+  
+  const result = await Concern.aggregate([{
+  $match:{_id:new Types.ObjectId(concenId),userId: new Types.ObjectId(userId)}},
+  {$lookup:{from:"bookings",localField:"bookingId",foreignField:"_id", as:"booking"}},
+  {$unwind:"$booking"},
+  {$lookup:{from:"vehicles",localField:"booking.vehicleId",foreignField:"_id",as:"vehicle"}},
+  {$unwind:"$vehicle"},
+  {$lookup:{from:"categories",localField:"booking.categoryId",foreignField:"_id",as:"category"}},
+  {$unwind:"$category"},
+  {$lookup:{from:"servicecenters",localField:"serviceCenterId",foreignField:"_id",as:"serviceCenter" }},
+  {$unwind:"$serviceCenter"},
+  {
+    $project:{
+      issueTitle: 1,
+        description: 1,
+        proof: 1,
+        status: 1,
+        providerResponse: 1,
+        timeline: 1,
+        createdAt: 1,
+        bookingId: 1,
+        serviceCenterId: 1,
+        resolutionBookingId: 1,
+        vehicleRegistrationNumber: "$vehicle.RegistrationNumber",
+        vehicleBrand: "$vehicle.brand",
+        vehicleModel: "$vehicle.model",
+        vehiclePhotoUrl: "$vehicle.documents.vehicleImage",
+        categoryName: "$category.name",
+        garageName: "$serviceCenter.providerProfile.garageName",
+        originalServiceDate: "$booking.schedule.date",
+    }
+  }
+])
+return result[0] ?? null
+}
+async findActiveConcernByBookingIds(bookingIds: string[]): Promise<{ bookingId: string; concernId: string; }[]> {
+  
+  const concerns = await Concern.find({
+    bookingId:{$in:bookingIds.map((id)=> new Types.ObjectId(id))},
+    status:{$in:["pending", "approved", "scheduled"]}},
+    {bookingId:1})
+    return concerns.map((c)=> ({bookingId:c.bookingId.toString(),concernId:c._id.toString()}))
 }
 }

@@ -40,3 +40,24 @@ export interface RespondToConcernDTO {
   rejected: boolean;
   rejectReason?: string;
 }
+
+export interface UserConcernDetailDTO {
+  id: string;
+  bookingId: string;
+  serviceCenterId: string;
+  issueTitle: string;
+  description: string;
+  proof: { imageUrl?: string; videoUrl?: string }[];
+  status: "pending" | "approved" | "rejected" | "scheduled" | "resolved";
+  providerResponse?: { rejected: boolean; rejectReason?: string; respondedAt?: Date };
+  resolutionBookingId?: string;
+  vehicleRegistrationNumber: string;
+  vehicleBrand: string;
+  vehicleModel: string;
+  vehiclePhotoUrl: string | null;
+  categoryName: string;
+  garageName: string;
+  originalServiceDate: string;
+  timeline: { status: string; updatedBy: string; at: Date }[];
+  createdAt: Date;
+}

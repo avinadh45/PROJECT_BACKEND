@@ -12,18 +12,19 @@ import { SlotRepository } from "../../repository/slot/slotRepository"
 import { SlotService } from "../../service/slot/slotService"
 import { BookingRepository } from "../../repository/booking/BookingRepository"
 import { MechanicReadRepository } from "../../repository/mechanic/mechanicReadRepository"
-
+import { ConcernRepository } from "../../repository/concern/ConcernRepository"
 
 
 const router = express.Router()
 const repo = new CategoryRepository(Category)
 const serviceCenterRepo = new ServiceCenterRepository()
+const concernRepo = new ConcernRepository()
 const bookingRepo = new BookingRepository()
 const mechRepo  = new MechanicReadRepository()
 const slotRepo = new SlotRepository()
 const slotService = new SlotService(slotRepo,slotRepo,serviceCenterRepo)
 const slotController = new SlotController(slotService)
-const bookingService = new BookingService(serviceCenterRepo,bookingRepo,slotRepo,mechRepo)
+const bookingService = new BookingService(serviceCenterRepo,bookingRepo,slotRepo,mechRepo,concernRepo)
 const controller = new BookingController(bookingService)
 const categoryService  = new CategoryService(repo,repo)
 const categoryController = new CategoryController(categoryService)

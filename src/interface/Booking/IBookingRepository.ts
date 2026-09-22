@@ -1,6 +1,7 @@
 import { Types } from 'mongoose'
 import { IBooking, IJobDescriptionItem } from './IBookking'
 import { PaginatedResponse } from '../common/pagination'
+import { IConcernReadRepository } from '../concern/IConcernRepository'
 
 export interface IBookkingReadRepository{ 
 
@@ -11,7 +12,7 @@ export interface IBookkingReadRepository{
     findByMechanic(mechanicId:string,page:number,limit:number,status?:string,search?:string):Promise<PaginatedResponse<any>>
     findMechanicBookingDetails(bookingId:string,mechanicId:string):Promise<any | null>
     findServiceCenterBookingDetails(bookingId:string,serviceCenterId:string):Promise<any | null>
-    findByUser(userId:string,page:number,limit:number,status?:string,search?:string):Promise<PaginatedResponse<any>>
+    findByUser(userId:string,page:number,limit:number,status?:string,search?:string,concernRepo?:IConcernReadRepository):Promise<PaginatedResponse<any>>
     findUserBookingDetails(bookingId:string,userId:string):Promise<any | null>
 }
 

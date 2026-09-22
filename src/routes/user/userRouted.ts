@@ -15,6 +15,7 @@ import { BookingRepository } from "../../repository/booking/BookingRepository";
 import { SlotRepository } from "../../repository/slot/slotRepository";
 import { MechanicReadRepository } from "../../repository/mechanic/mechanicReadRepository";
 import { BookingController } from "../../controller/booking/bookingController";
+import { ConcernRepository } from "../../repository/concern/ConcernRepository";
 const router = Router()
 
 const userRepository = new UserRepository(User);
@@ -24,7 +25,8 @@ const serviceCenterRepo = new ServiceCenterRepository()
 const bookingRepo = new BookingRepository()
 const slotRepo = new SlotRepository()
 const mechanicRepo = new MechanicReadRepository()
-const bookingService = new BookingService(serviceCenterRepo,bookingRepo,slotRepo,mechanicRepo)
+const concernRepo = new ConcernRepository()
+const bookingService = new BookingService(serviceCenterRepo,bookingRepo,slotRepo,mechanicRepo,concernRepo)
 const bookingController = new BookingController(bookingService)
 
 
@@ -49,5 +51,6 @@ router.get("/my-bookings",authMiddleware,bookingController.getUserBooking)
 router.get("/details/:bookingId",authMiddleware,bookingController.getUserBookingDetails)
 router.patch("/booking/:bookingId/cancel",authMiddleware,bookingController.cancelBooking)
 router.patch("/booking/:bookingId/reschedule",authMiddleware,bookingController.rescheduleBooking)
+router.get("/me",authMiddleware,userController.getMe)
 
 export default router

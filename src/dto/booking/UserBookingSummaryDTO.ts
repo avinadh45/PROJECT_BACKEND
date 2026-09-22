@@ -12,4 +12,7 @@ export interface UserBookingSummaryDTO {
   };
   status: string;
   advancePaymentStatus: "pending" | "paid" | "failed";
+  activeConcernId: string | null;
+  concernId: string | null; 
+   followUpVisits: { id: string; status: string; schedule: { date: string; slotStartingTime: string } }[];
 }

@@ -38,6 +38,8 @@ const BookingSchema = new Schema<IBooking>({
   mechanicId: { type: Schema.Types.ObjectId, ref: "User" },
  visitType: { type: String, enum: ["drive-in", "pickup-drop"], required: true },
 
+ originalBookingId: { type: Schema.Types.ObjectId, ref: "Booking" },
+ concernId: { type: Schema.Types.ObjectId, ref: "Concern" },
   pickupLocation: { type: PickupLocationSchema, required: false },
   additionalInfo: { type: String, required: false },   
 

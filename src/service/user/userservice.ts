@@ -21,6 +21,7 @@ import { userListDTO } from "../../dto/admin/userListDTO";
 import { MESSAGES } from "../../constants/message";
 import { logger } from "../../config/logger";
 import { userDetailsDTO } from "../../dto/admin/userDetail";
+import { UserProfileDTO } from "../../dto/user/UserProfileDTO";
 
 export class UserService implements IUserService {
   constructor(
@@ -236,7 +237,13 @@ export class UserService implements IUserService {
     if (!user) {
       throw new AppError(MESSAGES.USER.FAILED_UPDATE,HttpStatus.INTERNAL_SERVER_ERROR);
     }
-
     return UserMapper.toUserDetailsDTP(user);
   }
+ async getMe(id: string): Promise<UserProfileDTO> {
+  const user = await this._userCreaterepo.findUserById(id);
+  if (!user) {
+    throw new AppError(MESSAGES.USER.NOT_FOUND, HttpStatus.NOT_FOUND);
+  }
+  return UserMapper.toProfileDTO(user);
+}
 }
