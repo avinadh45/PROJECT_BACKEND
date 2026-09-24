@@ -15,6 +15,7 @@ import { AddServiceDTO } from "../../dto/serviceCenter/addServiceDTO";
 import { ICategory } from "../category/categoryinterface";
 import { UpdateAvailabilityDTO } from "../../dto/slot/UpdateAvilability";
 import { AvailabilityResponseDTO } from "../../dto/serviceCenter/AvailabilityResponseDTO";
+import { ServiceCenterProfileDTO } from "../../dto/admin/AdminProfileDTO";
 export interface IServiceCenterService{
     register(dto:ServiceCenterRegisterDTO):Promise< ServiceCenterResponseDTO>
     login(dto:ServiceCenterLogin):Promise<any>
@@ -38,4 +39,5 @@ export interface IServiceCenterService{
     toggleServiceStatus(serviceCenterId:string,serviceId:string):Promise<IServiceCenter | null>
     getProfile(serviceCenterId:string):Promise<IServiceCenter>
     updateAvailiability(serviceCenterId:string,dto:UpdateAvailabilityDTO):Promise<AvailabilityResponseDTO>
+    getMe(serviceCenterId:string):Promise<ServiceCenterProfileDTO>
 }

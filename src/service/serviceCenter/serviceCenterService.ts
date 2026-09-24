@@ -29,6 +29,7 @@ import { ICategory } from "../../interface/category/categoryinterface";
 import { AvailabilityResponseDTO } from "../../dto/serviceCenter/AvailabilityResponseDTO";
 import { UpdateAvailabilityDTO } from "../../dto/slot/UpdateAvilability";
 import { ISlotWriteRepository } from "../../interface/slot/ISlotRepository";
+import { ServiceCenterProfileDTO } from "../../dto/admin/AdminProfileDTO";
 
 
 export class ServiceCenterService implements IServiceCenterService {
@@ -452,5 +453,13 @@ export class ServiceCenterService implements IServiceCenterService {
     }
     this._slotWriteRepo.clearRegeneratetableSlots(serviceCenterId)
     return ServiceCenterMapper.toResponseDTO(updated)
+  }
+  async getMe(serviceCenterId: string): Promise<ServiceCenterProfileDTO> {
+    
+    const serviceCenter = await this._repository.findById(serviceCenterId)
+    if(!serviceCenter){
+      throw new AppError(MESSAGES.COMMON.NOT_FOUND,HttpStatus.NOT_FOUND)
+    }
+    return ServiceCenterMapper.toProfileDTO(serviceCenter)
   }
 }

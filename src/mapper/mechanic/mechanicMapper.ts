@@ -2,6 +2,7 @@ import { MechanicResponseDTO } from "../../dto/mechanic/mechanicResponsedto";
 import { CreateMechanicDTO } from "../../dto/mechanic/createMechanicdto";
 import { IUser } from "../../interface/User/userinterface";
 import { IMechanic } from "../../interface/Machanic/machanicinterface";
+import { MechanicProfileDTO } from "../../dto/mechanic/mechanicProfileDTO";
 export class MachanicMapper{
    
   static toEntity(dto:CreateMechanicDTO): Partial<IMechanic> {
@@ -22,6 +23,14 @@ export class MachanicMapper{
       name:entity.name,
       isBlocked:entity.isBlocked ?? false
 
+    }
+  }
+  static toProfileDTO(entity:IUser):MechanicProfileDTO{
+    return{
+      id: entity._id.toString(),
+      email:entity.email,
+      name:entity.name,
+      role:entity.role
     }
   }
 }

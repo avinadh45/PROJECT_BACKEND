@@ -4,6 +4,7 @@ import { HttpStatus } from "../../enums/httpstatus";
 import { MESSAGES } from "../../constants/message";
 import { asyncHandler } from "../../utils/asyncHandler";
 import { logger } from "../../config/logger";
+import { sendSuccess } from "../../utils/apiResponse";
 
 export class MechanicController {
   constructor(private mechanicService: IMechanicService) {}
@@ -70,5 +71,11 @@ export class MechanicController {
   });
   getDashboard = asyncHandler(async(req:Request,res:Response)=>{
     return res.status(HttpStatus.OK).json({success:true})
+  })
+  getMe = asyncHandler(async(req:Request,res:Response)=>{
+
+    const mechanic = (req as any).mechanic.id 
+    const result = await this.mechanicService.getMe(mechanic)
+    sendSuccess(res,result,MESSAGES.MECHANIC.FETCHED,HttpStatus.OK)
   })
 }

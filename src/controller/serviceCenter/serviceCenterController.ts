@@ -305,4 +305,5 @@ export class ServiceCenterController {
     const result = await this._service.updateAvailiability(serviceCenterId,req.body)
     return sendSuccess(res,result,MESSAGES.SERVICE_CENTER.AVIABILITY,HttpStatus.OK)
   })
+  
 }

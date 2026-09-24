@@ -12,6 +12,7 @@ import { ServiceCenterSubscriptionStatusDTO } from "../../interface/subscription
 import { ISubscriptionReadRepos } from "../../interface/subscription/ISubscriptionReadRepository";
 import { AvailabilityResponseDTO } from "../../dto/serviceCenter/AvailabilityResponseDTO";
 import { Types } from "mongoose";
+import { ServiceCenterProfileDTO } from "../../dto/admin/AdminProfileDTO";
 export class ServiceCenterMapper {
   static toEntity(dto: ServiceCenterRegisterDTO): Partial<IServiceCenter> {
     return {
@@ -276,5 +277,12 @@ static toServiceOffered(dto: AddServiceDTO): ServiceOfferedInput {
       slotDuration: availability?.slotDuration ?? 0,
       maxBookingsPerSlot: availability?.maxBookingsPerSlot ?? 0,
     };
+  }
+  static toProfileDTO(entity:IServiceCenter):ServiceCenterProfileDTO{
+    return{
+      id:entity._id.toString(),
+      email:entity.email,
+      garageName:entity.providerProfile.garageName
+    }
   }
 }

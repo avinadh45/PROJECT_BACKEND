@@ -35,5 +35,6 @@ router.get("/bookings/:bookingId",verifyMechanic,bookingController.getBookingInM
 router.patch("/bookings/:bookingId/job",verifyMechanic,bookingController.updateMechanicJob)
 router.patch("/bookings/:bookingId/status",verifyMechanic,bookingController.updateStatus)
 router.patch("/bookings/:bookingId/proof",verifyMechanic,upload.single("proofImage"),bookingController.uploadProof)
+router.get("/me",verifyMechanic,controller.getMe)
 
 export default router;

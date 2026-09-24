@@ -42,6 +42,7 @@ export function initSocketServer(httpServer: HTTPServer) {
         bookingId?: string;
         concernId?: string;
       }) => {
+         console.log("chat:join payload received:", { bookingId, concernId }); 
         try {
           let conversationId: string;
           if (bookingId) {

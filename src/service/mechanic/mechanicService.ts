@@ -12,6 +12,7 @@ import { HttpStatus } from "../../enums/httpstatus";
 import { MESSAGES } from "../../constants/message";
 import { MechanicResponseDTO } from "../../dto/mechanic/mechanicResponsedto";
 import { CreateMechanicSchema } from "../../validation/mechanicValidation";
+import { MechanicProfileDTO } from "../../dto/mechanic/mechanicProfileDTO";
 export class MechanicService implements IMechanicService {
   constructor(
     private _readRepository: IMechanicReadRepository,
@@ -110,8 +111,12 @@ export class MechanicService implements IMechanicService {
     }
     return MachanicMapper.toResponse(data);
   }
-  // async getMechanics(serviceCenterId:string){
-  //     const mechanic = await this.readRepository.findByGarage(serviceCenterId)
-  //     return mechanic.map(MapMechanicToDTO)
-  // }
+  async getMe(id: string): Promise<MechanicProfileDTO> {
+    
+    const mechanic = await this._readRepository.findById(id) 
+    if(!mechanic){
+      throw new AppError(MESSAGES.COMMON.NOT_FOUND,HttpStatus.OK)
+    }
+    return MachanicMapper.toProfileDTO(mechanic)
+  }
 }

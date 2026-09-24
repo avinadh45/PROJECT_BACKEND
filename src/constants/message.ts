@@ -80,6 +80,7 @@ export const MESSAGES = {
     INVALID:"Invalid credentials",
     NO_TOKEN:"No token provided",
     ACCESS_DENIED:"Access denied",
+    FETCHED:"Fetched successfully"
     
   },
 
