@@ -30,7 +30,7 @@ export function initSocketServer(httpServer: HTTPServer) {
   });
   io.use(socketAuthMiddleware);
   io.on("connection", (socket: AuthenticatedSocket) => {
-    console.log(`Socket connected: ${socket.userRole}:${socket.userId}`);
+    //console.log(`Socket connected: ${socket.userRole}:${socket.userId}`);
 
     socket.join(`${socket.userRole}:${socket.userId}`);
     socket.on(
@@ -42,7 +42,7 @@ export function initSocketServer(httpServer: HTTPServer) {
         bookingId?: string;
         concernId?: string;
       }) => {
-         console.log("chat:join payload received:", { bookingId, concernId }); 
+        // console.log("chat:join payload received:", { bookingId, concernId }); 
         try {
           let conversationId: string;
           if (bookingId) {
@@ -89,7 +89,9 @@ export function initSocketServer(httpServer: HTTPServer) {
           socket
             .to(`chat:${conversationId}`)
             .emit("chat:read", { conversationId, userId: socket.userId });
-        } catch (error) {}
+        } catch (error:any) {
+            socket.emit("chat:error", { message: error.message ?? "Could not mark read" });
+        }
       },
     );
     socket.on("disconnect", () => {

@@ -13,10 +13,12 @@ import { SubscriptionUpdateDTO } from "../../dto/subscription/updateDTO";
 import { ISubscriptionDeleteRepository } from "../../interface/subscription/ISubscriptionDeleteRepo";
 import { IServiceCenterRepository } from "../../interface/ServiceCenter/IServiceCenterRepository";
 import { ServiceCenterSubscriptionStatusDTO } from "../../interface/subscription/IServiceCenterSubscriptionStatus";
+import { IWalletService } from "../../interface/wallet/IWalletService";
 import { ServiceCenterMapper } from "../../mapper/ServiceCenter/ServiceCenterMapper";
 import { SubscribeToPlaneDTO } from "../../dto/subscription/SubscribeToPlanDTO";
 import { getRazorpayInstance } from "../../utils/razorpay";
 import { VerifyPaymentDTO } from "../../dto/subscription/VerifyPaymentDTO";
+import { logger } from "../../config/logger";
 import crypto from "crypto"
 
 export class SubscriptionService implements ISubscriptionService {
@@ -24,7 +26,8 @@ export class SubscriptionService implements ISubscriptionService {
     private _createRepo: ISubscriptionCreateRepository,
     private _readRepo: ISubscriptionReadRepos,
     private _deleteRepo: ISubscriptionDeleteRepository,
-    private _serviceCenterRepo:IServiceCenterRepository
+    private _serviceCenterRepo:IServiceCenterRepository,
+    private _walletService :IWalletService
   ) {}
 
   async createSubscription(dto: SubscriptionCreateDTO): Promise<ISubscription> {
@@ -143,7 +146,22 @@ export class SubscriptionService implements ISubscriptionService {
     if(generatedSignature !== razorpay_signature){
       throw new AppError(MESSAGES.COMMON.PAYMENT_FAILED,HttpStatus.BAD_REQUEST)
     }
-    return this.subscribeToPlane(serviceCenterId,{subscriptionId,durationMonths})
+
+    const status = await this.subscribeToPlane(serviceCenterId,{ subscriptionId,durationMonths})
+
+    try {
+      const plan = await this._readRepo.findById(subscriptionId)
+      const tier = plan?.pricing.find((t)=> t.durationMonths === durationMonths) 
+      if(tier){
+        await this._walletService.recordSubscriptionPayment({
+          paymentId: razorpay_payment_id,
+          amount: tier.price
+        })
+      }
+    } catch (error) {
+         logger.error(`Wallet credit failed for subscription payment ${razorpay_payment_id}`, error)
+    }
+    return status
   }
 }
 

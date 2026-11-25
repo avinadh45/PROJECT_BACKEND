@@ -16,6 +16,11 @@ import { SlotRepository } from "../../repository/slot/slotRepository";
 import { MechanicReadRepository } from "../../repository/mechanic/mechanicReadRepository";
 import { BookingController } from "../../controller/booking/bookingController";
 import { ConcernRepository } from "../../repository/concern/ConcernRepository";
+import { NotificationService } from "../../service/notification/NotificationService";
+import { NotificationRepository } from "../../repository/notification/NotificationRepository";
+import { WalletService } from "../../service/wallet/walletService";
+import { WalletRepository } from "../../repository/wallet/walletRepository";
+
 const router = Router()
 
 const userRepository = new UserRepository(User);
@@ -26,7 +31,11 @@ const bookingRepo = new BookingRepository()
 const slotRepo = new SlotRepository()
 const mechanicRepo = new MechanicReadRepository()
 const concernRepo = new ConcernRepository()
-const bookingService = new BookingService(serviceCenterRepo,bookingRepo,slotRepo,mechanicRepo,concernRepo)
+const notificationRepo = new NotificationRepository()
+const walletRepo = new WalletRepository()
+const notificationServer = new NotificationService(notificationRepo,notificationRepo)
+const walletService = new WalletService(walletRepo)
+const bookingService = new BookingService(serviceCenterRepo,bookingRepo,slotRepo,mechanicRepo,concernRepo,notificationServer,walletService)
 const bookingController = new BookingController(bookingService)
 
 

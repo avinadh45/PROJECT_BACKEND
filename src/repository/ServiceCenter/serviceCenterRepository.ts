@@ -222,4 +222,121 @@ export class ServiceCenterRepository implements IServiceCenterRepository {
     })
     return ServiceCenter.aggregate(pipeline)
   }
+
+  async findProfileWithServices(serviceCenterId: string): Promise<any | null> {
+    
+    const result = await ServiceCenter.aggregate([
+      {$match :{_id: new Types.ObjectId(serviceCenterId)}},
+      {
+        $lookup: {
+          from:"categories",
+          localField:"serviceOffered.serviceId",
+          foreignField:"_id",
+          as:"categoryInfo"
+        },
+      },
+      {
+        $addFields:{
+          servicesOffered: {
+            $map:{
+              input: "$servicesOffered",
+              as:"so",
+              in:{
+                serviceId:"$$so.serviceId",
+                advanceFee:"$$so.advanceFee",
+                status:"$$so.status",
+                vehicleTypes:"$$so.vehicleTypes",
+                serviceModes:"$$so.serviceModes", 
+                name:{
+                  $first:{
+                    $map:{
+                      input:{
+                        $filter:{
+                          input:"$categoryInfo",
+                          as:"c",
+                          cond:{$eq:["$$c._id","$$so.serviceId"]}
+                        },
+                      },
+                      as:"c",
+                      in:"$$c.name",
+                    },
+                  },
+                },
+                icon:{
+                  $first:{
+                    $map:{
+                      input:{
+                        $filter:{
+                          input: "$categoryInfo",
+                          as:"c",
+                           cond: { $eq: ["$$c._id", "$$so.serviceId"] },
+                        },
+                      },
+                      as:"c",
+                      in:"$$c.icon",
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+      {
+        $project:{
+          email:1,
+          providerProfile:1,
+          availability:1,
+          servicesOffered:1,
+          verificationStatus:1
+        }
+      }
+    ])
+    return result[0] ?? null
+  }
+
+  async updateProfile(serviceCenterId: string, data: Partial<IServiceCenter["providerProfile"]>): Promise<IServiceCenter | null> {
+    
+    const setFields: Record<string,any> = {};
+    if(data.garageName !== undefined) setFields["providerProfile.garageName"] = data.garageName; 
+    if(data.ownerName !== undefined) setFields["providerProfile.ownerName"] = data.ownerName
+    if(data.phone !== undefined) setFields["providerProfile.phone"] = data.phone; 
+    if(data.formattedAddress !== undefined) setFields["providerProfile.formattedAddress"] = data.formattedAddress
+    if(data.location !== undefined) setFields["providerProfile.location"] = data.location 
+
+    return ServiceCenter.findByIdAndUpdate(
+      serviceCenterId,
+      { $set: setFields},
+      { returnDocument:"after" },).lean()
+  }
+
+async updateCoverImages(serviceCenterId: string, images: { url: string; public_id: string }[]):Promise< IServiceCenter | null> {
+  return ServiceCenter.findByIdAndUpdate(
+    serviceCenterId,
+    { $set: { "providerProfile.garageProfileImage": images } }, 
+    { returnDocument: "after" },
+  ).lean()as unknown as Promise<IServiceCenter | null>; ;
 }
+
+async findPublicProfile(serviceCenterId: string): Promise<IServiceCenter | null> {
+  
+  if (!Types.ObjectId.isValid(serviceCenterId)) return null; 
+  return ServiceCenter.findOne({
+    _id:serviceCenterId,
+    verificationStatus:"approved",
+    isBlocked:false,
+    "subscription.status":"active",
+    "subscription.endDate":{ $gt: new Date() },
+  }).select(
+  "providerProfile.garageName providerProfile.garageProfileImage providerProfile.formattedAddress providerProfile.location availability servicesOffered reviewStats",
+)
+  .populate("servicesOffered.serviceId","name icon")
+  .lean() as unknown as Promise< IServiceCenter | null >
+}
+
+async adjustReviewStatus(serviceCenterId: string, countDelta: number, totalDelta: number): Promise<void> {
+  
+  await ServiceCenter.updateOne({_id:serviceCenterId},{$inc:{"reviewStats.count":countDelta,  "reviewStats.total": totalDelta}})
+}
+}
+

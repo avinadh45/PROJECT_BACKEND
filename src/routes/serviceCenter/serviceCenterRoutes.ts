@@ -17,6 +17,13 @@ import { BookingController } from "../../controller/booking/bookingController";
 import { BookingService } from "../../service/booking/bookingService";
 import { BookingRepository } from "../../repository/booking/BookingRepository";
 import { ConcernRepository } from "../../repository/concern/ConcernRepository";
+import { NotificationService } from "../../service/notification/NotificationService";
+import { NotificationRepository } from "../../repository/notification/NotificationRepository";
+import { uploadGarage } from "../../middleware/upload";
+import { updateGarageProfileSchema } from "../../validation/serviceCenterProfilevalidation";
+import { WalletController } from "../../controller/wallet/walletController";
+import { WalletService } from "../../service/wallet/walletService";
+import { WalletRepository } from "../../repository/wallet/walletRepository";
 
 
 const router = express.Router()
@@ -29,11 +36,17 @@ const writeRepository = new MechanicWriteRepository();
 const slotRepository = new SlotRepository()
 const concernRepo = new ConcernRepository()
 const bookingRepo = new BookingRepository()
-const bookingService = new BookingService(repository,bookingRepo,slotRepository,readRepository,concernRepo)
-const bookingController = new BookingController(bookingService)
+const notificationRepo = new NotificationRepository()
+const notificationServer = new NotificationService(notificationRepo,notificationRepo)
 const service = new ServiceCenterService(repository,mailService,categoryRepo,slotRepository)
 const mechanicService = new MechanicService(readRepository,writeRepository)
 const controller = new ServiceCenterController(service,mechanicService)
+const walletRepo = new WalletRepository()
+const walletService = new WalletService(walletRepo) 
+const walletController = new WalletController(walletService)
+const bookingService = new BookingService(repository,bookingRepo,slotRepository,readRepository,concernRepo,notificationServer,walletService)
+
+const bookingController = new BookingController(bookingService)
 
 
 router.post("/register",upload.fields([{name:"garageLicense",maxCount:1},{name:"ownerIdProof",maxCount:1}]),controller.register.bind(controller))
@@ -57,6 +70,11 @@ router.patch("/availability",validate(updateAvailabilitySchema),controller.updat
 router.get("/bookings",bookingController.getServiceCenterBookings)
 router.get("/bookings/:bookingId",bookingController.getServiceCenterBookingDetails)
 router.patch("/bookings/:bookingId/mark-refunded",bookingController.markRefund)
+router.get("/profiles",controller.getMyProfile)
+router.patch("/garage-profile/edit",validate(updateGarageProfileSchema) ,controller.updateProfile)
+router.patch("/garage-profile/images",uploadGarage.array("images",2),controller.updateCoverImages)
+
+router.get("/wallet",walletController.getMyWallet)
 
 export default router
     

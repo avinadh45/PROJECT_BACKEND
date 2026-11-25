@@ -135,4 +135,15 @@ export class AdminController {
   
      return sendSuccess(res, null, MESSAGES.ADMIN.LOGOUT_SUCCESS, HttpStatus.OK);;
   });
+
+
+  getProfile = asyncHandler(async(req:Request,res:Response)=>{
+
+    const adminId = ( req as any).admin.id;
+    console.log("req keys", Object.keys(req as any), (req as any).user, (req as any).admin);
+    
+    const data = await this._adminService.getProfile(adminId)
+    sendSuccess(res,data,MESSAGES.ADMIN.PROFILE_FETCHED,HttpStatus.OK)
+  })
+
 }

@@ -15,6 +15,7 @@ import {
   ISlotReadRepository,
   ISlotWriteRepository,
 } from "../../interface/slot/ISlotRepository";
+import { logger } from "../../config/logger";
 import { AppError } from "../../utils/AppError";
 import { MESSAGES } from "../../constants/message";
 import { HttpStatus } from "../../enums/httpstatus";
@@ -31,6 +32,10 @@ import { UserBookingSummaryDTO } from "../../dto/booking/UserBookingSummaryDTO";
 import { UserBookingDetailDTO } from "../../dto/booking/UserBookingDetailsDTO";
 import { RescheduleBookingDTO } from "../../dto/booking/RescheduleBookingDTO";
 import { IConcernReadRepository } from "../../interface/concern/IConcernRepository";
+import { NotificationService } from "../notification/NotificationService";
+import { PublicGarageDTO } from "../../dto/serviceCenter/profileDTO";
+import { ServiceCenterMapper } from "../../mapper/ServiceCenter/ServiceCenterMapper";
+import { IWalletService } from "../../interface/wallet/IWalletService";
 
 export class BookingService implements IBookingService {
   constructor(
@@ -38,7 +43,10 @@ export class BookingService implements IBookingService {
     private _bookingRepo: IBookingWriteRepository & IBookkingReadRepository,
     private _slotRapo: ISlotReadRepository & ISlotWriteRepository,
     private _mechanicRepo: IMechanicReadRepository,
-    private _concernRepo:IConcernReadRepository
+    private _concernRepo:IConcernReadRepository,
+    private _notifiServer:NotificationService,
+    private _walletService: IWalletService
+  
   ) {}
 
   async findAvailableGarages(
@@ -180,6 +188,16 @@ export class BookingService implements IBookingService {
       booking.schedule.slotStartingTime,
     );
 
+    try {
+      await this._walletService.recordAdvanceSettlement({
+        bookingId: booking._id.toString(),
+        serviceCenterId: booking.serviceCenterId,
+        advanceAmount: booking.advancePayment.amount
+      })
+    } catch (error) {
+      logger.error(`Wallet credit failed for booking ${booking._id}`, error)
+    }
+
     return BookingMapper.toConfirmationDTO(booking);
   }
 
@@ -276,6 +294,18 @@ export class BookingService implements IBookingService {
     if (!update) {
       throw new AppError(MESSAGES.BOOKING.NOT_FOUND, HttpStatus.NOT_FOUND);
     }
+
+    await this._notifiServer.notify({
+      
+      recipientId: update.userId.toString(),
+    recipientRole: "user",
+    type: "booking_status",
+    title: "Booking status updated",
+    message: `Your booking is now ${status}`,
+    referenceId: update._id.toString(),
+    referenceType: "booking",
+    })
+
     const details = await this._bookingRepo.findMechanicBookingDetails(
       bookingId,
       mechanicId,
@@ -405,6 +435,16 @@ export class BookingService implements IBookingService {
       booking.advancePayment.refundedAt = new Date()
       booking.advancePayment.refundId = refund.id 
       await booking.save()
+
+      try {
+        await this._walletService.recordAdvanceRefund({ 
+          bookingId,
+          serviceCenterId: booking.serviceCenterId,
+          advanceAmount: booking.advancePayment.amount,
+        })
+      } catch (error) {
+        logger.error(`Wallet reversal failed for booking ${bookingId}`, error)
+      }
     const detail = await this._bookingRepo.findServiceCenterBookingDetails(bookingId,servicCenterId)
     return BookingMapper.toServiceCenterDetailDTO(detail)
   }
@@ -477,4 +517,12 @@ export class BookingService implements IBookingService {
      }
      return BookingMapper.toConfirmationDTO(booking)
   }
+  async getPublicGarage(serviceCenterId: string): Promise<PublicGarageDTO> {
+   
+  const doc = await this._serviceCenterRepo.findPublicProfile( serviceCenterId )
+  if(!doc) {
+    throw new AppError(MESSAGES.COMMON.NOT_FOUND,HttpStatus.NOT_FOUND)
+  }
+  return ServiceCenterMapper.toPublicDTO(doc)
+ }
 }

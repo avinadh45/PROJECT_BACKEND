@@ -30,10 +30,10 @@ export class ChatService implements IChatService {
   ): Promise<string> {
     const booking = await this._bookingRepo.findById(bookingId);
     if (!booking) {
-      throw new AppError(MESSAGES.CHAT.NOT_AVAILABLE, HttpStatus.BAD_REQUEST);
+      throw new AppError("Booking not found", HttpStatus.BAD_REQUEST);
     }
     if (!booking.mechanicId) {
-      throw new AppError(MESSAGES.CHAT.NOT_AVAILABLE, HttpStatus.BAD_REQUEST);
+      throw new AppError("No mechanic assigned to this booking yet", HttpStatus.BAD_REQUEST);
     }
     const isUser =
       requesterRole === "user" && booking.userId.toString() === requesterId;

@@ -175,4 +175,10 @@ rescheduleBooking = asyncHandler(async(req:Request,res:Response)=>{
   const result = await this._bookingService.rescheduleBooking(userId,bookingId as string,req.body)
   sendSuccess(res,result,MESSAGES.BOOKING.RESCHEDULED,HttpStatus.OK)
 })
+
+ getPublicGarage = asyncHandler(async(req:Request,res:Response)=>{
+
+    const resullt = await this._bookingService.getPublicGarage(req.params.serviceCenterId as string)
+    return sendSuccess(res,resullt,MESSAGES.SERVICE_CENTER.FETCH_SUCCESS,HttpStatus.OK)
+  })
 }

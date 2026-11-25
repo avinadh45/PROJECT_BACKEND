@@ -30,6 +30,8 @@ import { AvailabilityResponseDTO } from "../../dto/serviceCenter/AvailabilityRes
 import { UpdateAvailabilityDTO } from "../../dto/slot/UpdateAvilability";
 import { ISlotWriteRepository } from "../../interface/slot/ISlotRepository";
 import { ServiceCenterProfileDTO } from "../../dto/admin/AdminProfileDTO";
+import { PublicGarageDTO, ServiceCentersProfileDTO, UpdateGarageProfileDTO } from "../../dto/serviceCenter/profileDTO";
+import { deleteCloudinaryImages } from "../../utils/cloudinaryHelper";
 
 
 export class ServiceCenterService implements IServiceCenterService {
@@ -125,6 +127,8 @@ export class ServiceCenterService implements IServiceCenterService {
       token,
       process.env.JWT_REFRESH_SECRET as string,
     );
+
+    
     const newAccessToken = generateAccessToken({
       id: decoded.id,
       role: decoded.role,
@@ -462,4 +466,50 @@ export class ServiceCenterService implements IServiceCenterService {
     }
     return ServiceCenterMapper.toProfileDTO(serviceCenter)
   }
+
+  async getMyProfile(serviceCenterId: string): Promise<ServiceCentersProfileDTO> {
+    
+    const doc = await this._repository.findById(serviceCenterId)
+    if(!doc) throw new AppError(MESSAGES.COMMON.NOT_FOUND,HttpStatus.NOT_FOUND)
+      return ServiceCenterMapper.toDTO(doc)
+  }
+
+  async updateProfile(serviceCenterId: string, data: UpdateGarageProfileDTO): Promise<ServiceCentersProfileDTO> {
+    
+    const { latitude,longitude, ...profileFields} = data 
+
+     const update: Partial<IServiceCenter["providerProfile"]> = { ...profileFields };
+
+    if( latitude !== undefined && longitude !== undefined){
+      update.location = { type: "Point",coordinates:[longitude,latitude]}
+    }
+    const updated = await this._repository.updateProfile(serviceCenterId,update) 
+    if(!updated){
+      throw new AppError(MESSAGES.COMMON.NOT_FOUND,HttpStatus.NOT_FOUND)
+    }
+    return this.getMyProfile(serviceCenterId)
+  }
+
+ async updateCoverImage(serviceCenterId: string, files: Express.Multer.File[]): Promise<ServiceCentersProfileDTO> {
+   
+  if(! files || files.length === 0) { 
+    throw new AppError(MESSAGES.SERVICE_CENTER.IMAGE_REQUIRED,HttpStatus.BAD_REQUEST)
+  }
+
+  const existing = await this._repository.findById(serviceCenterId)
+  if(!existing) {
+    throw new AppError(MESSAGES.COMMON.NOT_FOUND,HttpStatus.NOT_FOUND)
+  }
+  const oldPublicIds = (existing.providerProfile.garageProfileImage ?? []).map((a)=> a.public_id)
+
+  const image = files.map((a)=> ({ url:a.path, public_id:a.filename}))
+
+  const updated = await this._repository.updateCoverImages(serviceCenterId,image)
+  if(!updated) throw new AppError(MESSAGES.COMMON.NOT_FOUND,HttpStatus.NOT_FOUND)
+    await deleteCloudinaryImages(oldPublicIds)
+
+  return this.getMyProfile(serviceCenterId)
+ }
+
+ 
 }

@@ -1,7 +1,9 @@
 import { Router } from "express";
 import { AdminController } from "../../controller/admin/admincontroller";
 import { Adminservice } from "../../service/admin/adminservice";
-import { authMiddleware } from "../../middleware/authMiddleware";
+import { WalletController } from "../../controller/wallet/walletController";
+import { WalletService } from "../../service/wallet/walletService";
+import { WalletRepository } from "../../repository/wallet/walletRepository";
 import { adminMiddleware } from "../../middleware/verifyAdmin";
 import User from "../../model/Usermodel";
 import { UserService } from "../../service/user/userservice";
@@ -14,16 +16,18 @@ import { CategoryRepository } from "../../repository/category/CategoryRepository
 import { SlotRepository } from "../../repository/slot/slotRepository";
 import { Category } from "../../model/categoryModel";
 
+
 const router = Router();
 
 const userRepo = new UserRepository(User);
 const otpRepository = new RedisOtpRepository();
 const mailService = new NodeMailerService();
 const serviceCenterRepo = new ServiceCenterRepository()
+const walletRepo = new WalletRepository() 
+const walletService = new WalletService(walletRepo) 
+const walletController = new WalletController(walletService)
 const categoryRepo = new CategoryRepository(Category)
-const userService =  new UserService( userRepo, 
-    otpRepository,
-    mailService)
+const userService =  new UserService( userRepo, otpRepository, mailService)
 const slotRepository = new SlotRepository()
 const adminService = new Adminservice(userRepo);
 const serviceCenterService = new ServiceCenterService( serviceCenterRepo,mailService,categoryRepo,slotRepository)
@@ -31,7 +35,6 @@ const adminController = new AdminController(adminService,userService,serviceCent
 
 router.post("/login", adminController.Login);
 router.post("/refresh-token",adminController.refreshToken)
-
 router.use(adminMiddleware)
 router.post("/logout",adminController.logout)
 router.get("/dashboard",adminController.getDashboard)
@@ -45,4 +48,7 @@ router.get("/verifyServiceCenter",adminController.getPendingServiceCenter.bind(a
 router.get("/verifyServiceCenter/:id",adminController.verifiServiceCenterDetails.bind(adminController))
 router.patch("/verifyServiceCenter/approve/:id",adminController.approveServiceCenter.bind(adminController))
 router.patch("/verifyServiceCenter/reject/:id",adminController.rejectServiceCenter.bind(adminController))
+router.get("/wallet",walletController.getPlatformWallet)
+router.get("/profile",adminController.getProfile)
+
 export default router;

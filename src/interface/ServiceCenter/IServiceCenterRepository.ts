@@ -16,4 +16,9 @@ export interface    IServiceCenterRepository{
     checkExistingService(serviceCenterId:string,serviceId:string):Promise<boolean>
     toggleServiceStatus( serviceCenterId:string,serviceId:string,status:"active" | "inactive"):Promise<IServiceCenter | null>
     findAvailableGarage(filter:{categoryId:string,vehicleType:string,serviceMode:string,latitude?:number,longitude?:number}):Promise<any[]>
+    findProfileWithServices(serviceCenterId:string):Promise< any | null>
+    updateProfile(serviceCenterId:string,data:Partial<IServiceCenter["providerProfile"]>):Promise< IServiceCenter | null>
+    updateCoverImages(serviceCenterId: string, images: { url: string; public_id: string }[]): Promise<IServiceCenter | null>
+    findPublicProfile( serviceCenterId:string):Promise<IServiceCenter | null>
+    adjustReviewStatus(serviceCenterId:string,countDelta:number,totalDelta:number):Promise<void>   
 }

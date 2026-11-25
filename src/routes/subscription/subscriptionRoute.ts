@@ -7,12 +7,16 @@ import { subscribeToPlanSchema, updateSubscriptionSchema } from "../../validatio
 import { ServiceCenterRepository } from "../../repository/ServiceCenter/serviceCenterRepository"
 import { validate } from "../../middleware/userValidation"
 import { verifyServiceCenter } from "../../middleware/verifyserviceCenter"
+import { WalletRepository } from "../../repository/wallet/walletRepository"
+import { WalletService } from "../../service/wallet/walletService"
 
 const router = express.Router()
 
+const walletRepo = new WalletRepository()
+const walletService = new WalletService(walletRepo)
 const subscriptionRepository = new SubscriptionRepository()
 const serviceCenterRepository = new ServiceCenterRepository()
-const subscriptionService = new SubscriptionService(subscriptionRepository,subscriptionRepository,subscriptionRepository,serviceCenterRepository, )
+const subscriptionService = new SubscriptionService(subscriptionRepository,subscriptionRepository,subscriptionRepository,serviceCenterRepository,walletService )
 const controller = new subscriptionController(subscriptionService)
 
 router.post("/add",adminMiddleware,controller.createSubscription)

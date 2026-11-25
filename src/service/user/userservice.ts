@@ -136,9 +136,18 @@ export class UserService implements IUserService {
       token,
       process.env.JWT_REFRESH_SECRET as string,
     );
+
+    const user = await this._userCreaterepo.findUserById(decoded.id)
+    if(!user){
+      throw new AppError(MESSAGES.USER.NOT_FOUND,HttpStatus.NOT_FOUND)
+    }
+    if(user.isBlocked) { 
+      throw new AppError(MESSAGES.USER.BLOCK,HttpStatus.FORBIDDEN)
+    }
     const newAccessToken = generateAccessToken({id:decoded.id,role:decoded.role});
     return { accessToken: newAccessToken };
   }
+  
   async resendOtp(email: string): Promise<void> {
     const user = await this._userCreaterepo.findUserByEmail(email);
     if (!user) {

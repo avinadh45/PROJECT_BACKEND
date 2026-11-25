@@ -1,5 +1,3 @@
-
-
 export const MESSAGES = {
 
   COMMON: {
@@ -68,7 +66,10 @@ export const MESSAGES = {
     NO_WORKING_DAYS:"No working days added",
     INVALID_WORKING_HOURS:"Invalid working days",
     INVALID_AVAILABILITY_VALUES:"Invalid availability values",
-    AVIABILITY:"Availability updated successfully"
+    AVIABILITY:"Availability updated successfully",
+    PROFILE_UPDATED:"Profile updated",
+    COVER_IMAGE_UPDATE:"Cover images updated",
+    IMAGE_REQUIRED:"Image required"
   },
 
   MECHANIC: {
@@ -99,7 +100,8 @@ export const MESSAGES = {
     LOGOUT_SUCCESS:"Logout successfully",
     CATEGORY_CREATED:"Category created",
     UPDATE_CATEGORY:"Category updated",
-    BLOCK_CATEGORY:"Category status updated"
+    BLOCK_CATEGORY:"Category status updated",
+    PROFILE_FETCHED:"Profile fetched successfully"
   },
     VEHICLE:{
       VEHICLE_DOC_REQUIRED:"All documents are required",
@@ -168,5 +170,44 @@ export const MESSAGES = {
       CHAT_FETCHED:"Chat fetched successfully",
       CONVERSATION_READY:"Conversation ready",
       MARKED_READ:"Chat marked as read"
-    }
+    },
+    NOTIFICATION:{
+      NOTIFICATION_FETCHED:"Notification fetched success fully",
+      UNREAD_FETCH:"Unread count fetched",
+      NOTIFICATION_MARKED:"Notification marked as read",
+      ALL_NOTIFICATION_MARKED:"All notifications marked as read"
+    },
+    INVOICE:{
+      ALREADY_EXIST:"Invoice already exist",
+      BOOKING_NOT_COMPLETED:"Booking not completed",
+      ALREADY_PAID:"Already paid",
+      PAYMENT_VERIFICATION_FAILED:"Payment verification failed",
+      INVOICE_GENERATED:"Invoice generated",
+      INVOICE_FETCHED:"Invoice fetched ",
+      PAYEMNT_ORDER:"Payment order created",
+      PAYMENT_VERIFIED : "Payment verified",
+      NO_OB_DATA:"Job data not found"
+    },
+
+REVIEW: {
+  CREATED: "Thanks for your review",
+  NOT_COMPLETED: "You can review only after the service is completed",
+  ALREADY_REVIEWED: "You have already reviewed this booking",
+  REVIEW_FETCHED:"Review Fetcched",
+  REVIEW_UPDATED:"Review updated successffully",
+  DELETED:"Review deleted successfully"
+  
+},
+
+DASHBOARD: { 
+  DASHBOARD_SUMMARY:"Dashboard summary fetched",
+  DASHBOARD_TREND:"Dashboard trends fetched",
+  TODAYS_BOOKING:"Today's bookings fetched",
+  DATA_FETCHED:"Dashboard data fetched"
+
+},
+
+WALLET:{
+  FETCHED:"Wallet fetched successfully"
+}
 }

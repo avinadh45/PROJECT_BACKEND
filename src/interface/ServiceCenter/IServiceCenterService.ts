@@ -16,6 +16,7 @@ import { ICategory } from "../category/categoryinterface";
 import { UpdateAvailabilityDTO } from "../../dto/slot/UpdateAvilability";
 import { AvailabilityResponseDTO } from "../../dto/serviceCenter/AvailabilityResponseDTO";
 import { ServiceCenterProfileDTO } from "../../dto/admin/AdminProfileDTO";
+import {  ServiceCentersProfileDTO } from "../../dto/serviceCenter/profileDTO";
 export interface IServiceCenterService{
     register(dto:ServiceCenterRegisterDTO):Promise< ServiceCenterResponseDTO>
     login(dto:ServiceCenterLogin):Promise<any>
@@ -40,4 +41,8 @@ export interface IServiceCenterService{
     getProfile(serviceCenterId:string):Promise<IServiceCenter>
     updateAvailiability(serviceCenterId:string,dto:UpdateAvailabilityDTO):Promise<AvailabilityResponseDTO>
     getMe(serviceCenterId:string):Promise<ServiceCenterProfileDTO>
+    getMyProfile(serviceCenterId:string):Promise<ServiceCentersProfileDTO>
+    updateProfile(serviceCenterId:string,data:any):Promise<ServiceCentersProfileDTO>
+    updateCoverImage(serviceCenterId:string,files:Express.Multer.File[]):Promise<ServiceCentersProfileDTO>
+    
 }

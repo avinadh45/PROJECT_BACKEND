@@ -27,3 +27,20 @@ const storage = new CloudinaryStorage({
 });
 
 export const upload = multer({ storage });
+
+
+const garageStorage = new CloudinaryStorage({ 
+  cloudinary,
+  params: async()=>({
+    folder: "motocline/garages",
+    allowed_formats:["jpg", "jpeg", "png", "webp"],
+    public_id: `garage_${Date.now()}_${Math.round(Math.random() * 1e6)}`,
+  })
+})
+
+export const uploadGarage = multer({
+  storage:garageStorage,
+  limits: { fileSize: 5 * 1024 * 1024 }, 
+})
+
+

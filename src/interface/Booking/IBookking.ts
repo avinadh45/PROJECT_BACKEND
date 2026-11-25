@@ -114,7 +114,7 @@ export interface IBooking{
     job?:IJob;
     progressTasks?:IProgressTask[];
     proof?:IProof;
-    invoice?:IInvoice;
+   // invoice?:IInvoice;
 
     advancePayment:IPaymentRecord;
     finalPayment?:IPaymentRecord;

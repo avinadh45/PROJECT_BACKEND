@@ -16,8 +16,7 @@ export interface IServiceCenter {
     garageName: string;
     ownerName: string;
     phone: string;
-    garageProfileImage?: string;
-
+    garageProfileImage?: {url:string;public_id: string}[]
     location?: {
       type: "Point";
       coordinates: number[];
@@ -37,6 +36,9 @@ export interface IServiceCenter {
     }
   };
 
+  reviewStats?: { count: number; total: number };
+
+  
   availability?: {
     workingDays: string[];
 

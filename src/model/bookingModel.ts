@@ -82,26 +82,26 @@ const BookingSchema = new Schema<IBooking>({
     uploadedBy:{ type:String},
     uploadedAt:{ type:String},
   },
-  invoice:{
-    invoiceNumber:{type:String},
-    labourCharges:[{
-      description: { type: String},
-      amount:{ type:Number}
-    }],
-    spareParts:[{
-      name:{ type:String},
-      qty:{ type:Number},
-      unitPrice:{ type:Number},
-      total:{type:Number}
-    }],
-    summary:{
-      labourTotal: { type:Number},
-      partsTotal:{ type:Number},
-      platformFee:{ type:Number},
-      advancePaid:{ type:Number},
-      grandTotal:{ type:Number},
-    },
-  },
+  // invoice:{
+  //   invoiceNumber:{type:String},
+  //   labourCharges:[{
+  //     description: { type: String},
+  //     amount:{ type:Number}
+  //   }],
+  //   spareParts:[{
+  //     name:{ type:String},
+  //     qty:{ type:Number},
+  //     unitPrice:{ type:Number},
+  //     total:{type:Number}
+  //   }],
+  //   summary:{
+  //     labourTotal: { type:Number},
+  //     partsTotal:{ type:Number},
+  //     platformFee:{ type:Number},
+  //     advancePaid:{ type:Number},
+  //     grandTotal:{ type:Number},
+  //   },
+  // },
   advancePayment: { type: PaymentRecordSchema,required:true},
   finalPayment:{ type:PaymentRecordSchema},
 },

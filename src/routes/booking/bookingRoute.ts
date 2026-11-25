@@ -13,7 +13,10 @@ import { SlotService } from "../../service/slot/slotService"
 import { BookingRepository } from "../../repository/booking/BookingRepository"
 import { MechanicReadRepository } from "../../repository/mechanic/mechanicReadRepository"
 import { ConcernRepository } from "../../repository/concern/ConcernRepository"
-
+import { NotificationService } from "../../service/notification/NotificationService";
+import { NotificationRepository } from "../../repository/notification/NotificationRepository";
+import { WalletRepository } from "../../repository/wallet/walletRepository"
+import { WalletService } from "../../service/wallet/walletService"
 
 const router = express.Router()
 const repo = new CategoryRepository(Category)
@@ -22,9 +25,13 @@ const concernRepo = new ConcernRepository()
 const bookingRepo = new BookingRepository()
 const mechRepo  = new MechanicReadRepository()
 const slotRepo = new SlotRepository()
+const notificationRepo = new NotificationRepository()
+const notificationServer = new NotificationService(notificationRepo,notificationRepo)
 const slotService = new SlotService(slotRepo,slotRepo,serviceCenterRepo)
+const walletRepo = new WalletRepository()
+const walletService = new WalletService(walletRepo)
 const slotController = new SlotController(slotService)
-const bookingService = new BookingService(serviceCenterRepo,bookingRepo,slotRepo,mechRepo,concernRepo)
+const bookingService = new BookingService(serviceCenterRepo,bookingRepo,slotRepo,mechRepo,concernRepo,notificationServer,walletService)
 const controller = new BookingController(bookingService)
 const categoryService  = new CategoryService(repo,repo)
 const categoryController = new CategoryController(categoryService)
@@ -35,8 +42,9 @@ router.get("/:serviceCenterId/slots",authMiddleware,slotController.getAvailableS
 router.post("/create-order",authMiddleware,controller.createOrder)
 router.post("/verify-payment",authMiddleware, controller.verifyPayment)
 router.get("/:bookingId",authMiddleware,controller.getBooking)
-
+router.get("/garages/:serviceCenterId",authMiddleware,controller.getPublicGarage)
 
 
 
 export default router
+

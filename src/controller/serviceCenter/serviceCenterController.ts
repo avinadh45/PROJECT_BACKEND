@@ -306,4 +306,27 @@ export class ServiceCenterController {
     return sendSuccess(res,result,MESSAGES.SERVICE_CENTER.AVIABILITY,HttpStatus.OK)
   })
   
+  getMyProfile = asyncHandler(async(req:Request,res:Response)=>{
+
+    const serviceCenterId = (req as any).serviceCenter.id 
+    const result = await this._service.getMyProfile(serviceCenterId)
+    return sendSuccess(res,result,MESSAGES.SERVICE_CENTER.PROFILE_FETCHED,HttpStatus.OK)
+  })
+
+  updateProfile = asyncHandler(async(req:Request,res:Response)=>{
+
+    const serviceCenterId = (req as any).serviceCenter.id; 
+    const result = await this._service.updateProfile(serviceCenterId,req.body)
+    return sendSuccess(res,result,MESSAGES.SERVICE_CENTER.PROFILE_UPDATED,HttpStatus.OK)
+  })
+
+  updateCoverImages = asyncHandler(async(req:Request,res:Response)=>{
+
+     const serviceCenterId = (req as any).serviceCenter.id; 
+      const files = (req.files as Express.Multer.File[]) ?? [];
+     const resullt = await this._service.updateCoverImage(serviceCenterId,files)
+     return sendSuccess(res,resullt,MESSAGES.SERVICE_CENTER.COVER_IMAGE_UPDATE,HttpStatus.OK)
+  })
+
+ 
 }

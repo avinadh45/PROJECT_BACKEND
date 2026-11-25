@@ -9,7 +9,7 @@ import { UserBookingDetailDTO } from "../../dto/booking/UserBookingDetailsDTO";
 import { UserBookingSummaryDTO } from "../../dto/booking/UserBookingSummaryDTO";
 import { PaginatedResponse } from "../common/pagination";
 import { IJobDescriptionItem } from "./IBookking";
-
+import { PublicGarageDTO } from "../../dto/serviceCenter/profileDTO";
 export interface IBookingService {
     findAvailableGarages(dto:GarageFilterDTO):Promise<GarageSearchResultDTO[]>
     createBookingOrder(userId:string,dto:BookingOrderDTO):Promise<BookingOrderResultDTO>
@@ -27,4 +27,5 @@ export interface IBookingService {
     cancelBooking(userId:string,bookingId:string):Promise<BookingConfirmationDTO>
     markBookingRefund(servicCenterId:string,bookingId:string):Promise<BookingServiceCenterDetailDTO>
     rescheduleBooking(userId:string,bookingId:string,dto:RescheduleBookingDTO):Promise<BookingConfirmationDTO   >
+    getPublicGarage(serviceCenterId:string):Promise<PublicGarageDTO>
 }

@@ -3,6 +3,10 @@ import { IServiceCenter } from "../interface/ServiceCenter/IServiceCenter";
 
 export type ServiceCenterDocument = HydratedDocument<IServiceCenter>;
 
+const imageSchema = new Schema(
+  { url: { type: String }, public_id: { type: String } },
+  { _id: false}
+)
 
 const serviceCenterSchema = new Schema<IServiceCenter>(
 {
@@ -55,7 +59,7 @@ resetTokenExpiry: {
       required: true
     },
 
-    garageProfileImage: String,
+    garageProfileImage: { type: [imageSchema], default: [] },
 
     location: {
       type: {
@@ -96,6 +100,10 @@ resetTokenExpiry: {
   }
 },
   },
+  reviewStats: {
+  count: { type: Number, default: 0 },
+  total: { type: Number, default: 0 },
+},
 
   availability: {
     workingDays: [String],

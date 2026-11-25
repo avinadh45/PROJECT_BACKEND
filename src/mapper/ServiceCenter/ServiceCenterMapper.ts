@@ -13,6 +13,8 @@ import { ISubscriptionReadRepos } from "../../interface/subscription/ISubscripti
 import { AvailabilityResponseDTO } from "../../dto/serviceCenter/AvailabilityResponseDTO";
 import { Types } from "mongoose";
 import { ServiceCenterProfileDTO } from "../../dto/admin/AdminProfileDTO";
+import { PublicGarageDTO, ServiceCentersProfileDTO } from "../../dto/serviceCenter/profileDTO";
+import { averageRating } from "../../utils/averageRating";
 export class ServiceCenterMapper {
   static toEntity(dto: ServiceCenterRegisterDTO): Partial<IServiceCenter> {
     return {
@@ -285,4 +287,68 @@ static toServiceOffered(dto: AddServiceDTO): ServiceOfferedInput {
       garageName:entity.providerProfile.garageName
     }
   }
+ static toDTO(doc: any) {
+  const servicesOffered = (doc.servicesOffered ?? []).map((a: any) => {
+    const category =
+    a.serviceId && typeof a.serviceId === "object" && a.serviceId.name ? a.serviceId : null;
+
+    return {
+      serviceId: (category?._id ?? a.serviceId).toString(),
+      name: category?.name ?? "",
+      icon: category?.icon,
+      advanceFee: a.advanceFee,
+      status: a.status,
+      vehicleTypes: a.vehicleTypes ?? [],
+      serviceModes: a.serviceModes ?? [],
+    };
+  });
+
+  const vehicleTypesHandled = [
+    ...new Set(servicesOffered.flatMap((a: any) => a.vehicleTypes)),
+  ].filter(Boolean) as string[];
+
+  return {
+    id: doc._id.toString(),
+    email: doc.email,
+    garageName: doc.providerProfile.garageName,
+    ownerName: doc.providerProfile.ownerName,
+    phone: doc.providerProfile.phone,
+    garageProfileImage: doc.providerProfile.garageProfileImage ?? [],
+    formattedAddress: doc.providerProfile.formattedAddress,
+    location: doc.providerProfile.location,
+    availability: doc.availability,
+    vehicleTypesHandled,
+    servicesOffered,
+  };
+}
+
+static toPublicDTO(doc: any): PublicGarageDTO {
+   const stats = doc.reviewStats;
+  const services = (doc.servicesOffered ?? [])
+ 
+    .filter((a: any) => a.status === "active" && a.serviceId?.name)
+    .map((a: any) => ({
+      serviceId: a.serviceId._id.toString(),
+      name: a.serviceId.name,
+      icon: a.serviceId.icon,
+      advanceFee: a.advanceFee,
+      vehicleTypes: a.vehicleTypes ?? [],
+      serviceModes: a.serviceModes ?? [],
+    }));
+
+  const coords = doc.providerProfile?.location?.coordinates;
+
+  return {
+    id: doc._id.toString(),
+    garageName: doc.providerProfile.garageName,
+    images: (doc.providerProfile.garageProfileImage ?? []).map((i: any) => i.url),
+    formattedAddress: doc.providerProfile.formattedAddress,
+    location: coords?.length === 2 ? { lat: coords[1], lng: coords[0] } : undefined,   
+    availability: doc.availability,
+    vehicleTypes: [...new Set(services.flatMap((s: any) => s.vehicleTypes))] as string[],
+    services,
+    rating: averageRating( doc.reviewStats),
+    reviewCount: stats?.count ?? 0
+  };
+}
 }

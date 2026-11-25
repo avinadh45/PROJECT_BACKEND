@@ -13,7 +13,12 @@ import slotRoutes from "./routes/slot/slotRoute"
 import bookingRoutes from "./routes/booking/bookingRoute"
 import concernRoutes from "./routes/concern/concernRouter"
 import chatRouter from "./routes/chat/chatRoute"
+import invoiceRouter from "./routes/invoice/invoiceRoute"
+import notificationRouter from "./routes/notification/notificationRoute"
+import reviewRouter from "./routes/review/reviewRoute"
 import { errorMiddleware } from "./middleware/errorMiddleware";
+import dashboardRouter from "./routes/dashboard/dashboardRoute"
+import adminDashboard from "./routes/dashboard/adminDashboardRoutes"
 
 dotenv.config(); 
 const app = express()
@@ -25,15 +30,21 @@ app.use(express.json())
 app.use(cookieParser())
 app.use("/",userRouter)
 app.use("/service-center",serviceCenterRouter)
+app.use("/service-center/dashboard",dashboardRouter)
 app.use("/mechanic", mechanicRouter)
 app.use("/admin/categorys", categoryRouter) 
 app.use("/admin",adminRouter)
+app.use("/admin/dashboard",adminDashboard)
 app.use("/vehicle",vehicleRouter)
 app.use("/subscription",subscriptionRouter)
 app.use('/slot',slotRoutes)
 app.use("/booking",bookingRoutes)
 app.use("/concern",concernRoutes)
 app.use("/chat",chatRouter)
+app.use("/notification",notificationRouter)
+app.use("/invoice",invoiceRouter)
+app.use("/review",reviewRouter)
+
 app.use(errorMiddleware)
 
 export default app  

@@ -29,9 +29,10 @@ export const errorMiddleware = (
         })
     }
     if(err.name === "CastError"){
+        console.error("CastError:", err.message);
         return res.status(HttpStatus.BAD_REQUEST).json({
             success:false,
-            message:"Invalid ID"
+            message: err.kind === "ObjectId" ? "Invalid ID" : "Invalid value",
         })
     }
     console.error(err);

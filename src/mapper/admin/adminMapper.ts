@@ -1,5 +1,6 @@
 import { AdminDTO } from "../../dto/admin/adminAuthResponsedto";
 import { AdminAuthResponseDTO } from "../../dto/admin/adminAuthResponsedto";
+import { AdminProfileDTO } from "../../dto/admin/AdminProfileDTO";
 import { IUser } from "../../interface/User/userinterface";
 
 export const AdminMapper={
@@ -21,5 +22,16 @@ export const AdminMapper={
       accessToken,
       refreshToken
     };
-  } 
+  } ,
+  toProfileDTO(user:IUser):AdminProfileDTO { 
+
+    return{
+      id:user._id.toString(),
+      name:user.name ?? "Admin",
+      email:user.email,
+      role: "admin",
+      createdAt: user.createdAt ?  new Date(user.createdAt).toISOString() : "",
+    }
+  }
+
 }

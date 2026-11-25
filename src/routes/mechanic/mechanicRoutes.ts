@@ -12,6 +12,10 @@ import { SlotRepository } from "../../repository/slot/slotRepository";
 import { ServiceCenterRepository } from "../../repository/ServiceCenter/serviceCenterRepository";
 import { upload } from "../../middleware/upload";
 import { ConcernRepository } from "../../repository/concern/ConcernRepository";
+import { NotificationService } from "../../service/notification/NotificationService";
+import { NotificationRepository } from "../../repository/notification/NotificationRepository";
+import { WalletRepository } from "../../repository/wallet/walletRepository";
+import { WalletService } from "../../service/wallet/walletService";
 
 const router = express.Router();
 
@@ -20,8 +24,12 @@ const writeRepository = new MechanicWriteRepository();
 const bookingRepo = new BookingRepository()
 const concernRepo  = new ConcernRepository()
 const slotRepo = new SlotRepository()
+const notificationRepo = new NotificationRepository()
+const notificationServer = new NotificationService(notificationRepo,notificationRepo)
 const serviceCenterRepo = new ServiceCenterRepository()
-const bookingService = new BookingService(serviceCenterRepo,bookingRepo,slotRepo,readRepository,concernRepo)
+const walletRepo = new WalletRepository()
+const walletService = new WalletService(walletRepo)
+const bookingService = new BookingService(serviceCenterRepo,bookingRepo,slotRepo,readRepository,concernRepo,notificationServer,walletService)
 const bookingController = new BookingController(bookingService)
 const service = new MechanicService(readRepository, writeRepository);
 const controller = new MechanicController(service);

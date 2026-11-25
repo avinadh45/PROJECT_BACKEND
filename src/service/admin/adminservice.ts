@@ -9,6 +9,7 @@ import { generateAccessToken, generateRefreshToken } from "../../utils/token";
 import { IAdminService } from "../../interface/Admin/IAdminService";
 import { AdminMapper } from "../../mapper/admin/adminMapper";
 import { MESSAGES } from "../../constants/message";
+import { AdminProfileDTO } from "../../dto/admin/AdminProfileDTO";
 export class Adminservice implements IAdminService {
   constructor(private _userReadRepo: IUserCreateRepository) {}
 
@@ -55,4 +56,13 @@ export class Adminservice implements IAdminService {
     return accessToken;
   }
  
+  async getProfile(adminId: string): Promise<AdminProfileDTO> {
+    
+    const admin = await this._userReadRepo.findUserById(adminId)
+
+    if(!admin || admin.role !== "admin"){
+      throw new AppError(MESSAGES.COMMON.NOT_FOUND,HttpStatus.NOT_FOUND)
+    }
+    return AdminMapper.toProfileDTO(admin)
+  }
 }
