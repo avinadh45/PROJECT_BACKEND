@@ -24,7 +24,7 @@ let io: Server;
 export function initSocketServer(httpServer: HTTPServer) {
   io = new Server(httpServer, {
     cors: {
-      origin: "http://localhost:5173",
+        origin: process.env.CLIENT_URL,
       credentials: true,
     },
   });

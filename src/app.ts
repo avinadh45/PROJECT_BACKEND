@@ -22,10 +22,19 @@ import adminDashboard from "./routes/dashboard/adminDashboardRoutes"
 
 dotenv.config(); 
 const app = express()
+
+app.set("trust proxy",1)
+
 app.use(cors({
-    origin: "http://localhost:5173",
+    origin: process.env.CLIENT_URL,
     credentials: true
 }))
+
+app.get("/health", (_req, res) => {
+    res.status(200).json({ status: "ok" })
+})
+
+
 app.use(express.json())
 app.use(cookieParser())
 app.use("/",userRouter)
