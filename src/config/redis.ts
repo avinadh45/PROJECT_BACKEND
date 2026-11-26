@@ -1,21 +1,38 @@
-const store = new Map<string, string>();
+// const store = new Map<string, string>();
 
-export const redisClient = {
-    set: async (key: string, value: string, options?: any) => {
-        store.set(key, value);
-    },
-    get: async (key: string) => {
-        return store.get(key) || null;
-    },
-    del: async (key: string) => {
-        store.delete(key);
-    },
-    connect: async () => {},
-    on: (event: string, callback: any) => {
-        if(event === "connect") callback();
+// export const redisClient = {
+//     set: async (key: string, value: string, options?: any) => {
+//         store.set(key, value);
+//     },
+//     get: async (key: string) => {
+//         return store.get(key) || null;
+//     },
+//     del: async (key: string) => {
+//         store.delete(key);
+//     },
+//     connect: async () => {},
+//     on: (event: string, callback: any) => {
+//         if(event === "connect") callback();
+//     }
+// };
+
+// export const connectRedis = async () => {
+//     console.log("Redis is running");
+// };
+
+import { createClient } from "redis";
+
+
+export const redisClient = createClient({ url: process.env.REDIS_URL})
+ 
+redisClient.on("error",(err)=> console.error("Redis error", err ))
+
+export const connectRedis = async ()=>{
+
+
+    if(!redisClient.isOpen){ 
+        await redisClient.connect()
     }
-};
-
-export const connectRedis = async () => {
-    console.log("Redis is running");
-};
+    console.log("Redis connected");
+    
+}
